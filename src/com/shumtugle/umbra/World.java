@@ -11,7 +11,7 @@ package com.shumtugle.umbra;
  * and each game pixel is a whole number of screen pixels.
  */
 final class World implements Game.Sink {
-    static final String VERSION = "0.2";   // shown on screen; keep in step with versionName
+    static final String VERSION = "0.3";   // shown on screen; keep in step with versionName
     static final int TARGET_W = 270;       // about this many game pixels across
 
     static final int DOWN = 0, MOVE = 1, UP = 2;
@@ -43,7 +43,7 @@ final class World implements Game.Sink {
     float lift;                            // the paddle rides this far above the finger
     int screen = MENU;
     int level, won, lost;
-    final Realm[] realms = {new Hole(), new Nucleus()};
+    final Realm[] realms = {new Hole(), new Station(), new Nucleus()};
     int realmIndex;
     private Scene[] scenes = new Scene[realms.length];
     Scene scene;
@@ -66,13 +66,17 @@ final class World implements Game.Sink {
         return realms[realmIndex];
     }
 
-    /** Each realm keeps its own level: the first realm's levels carry over from before realms. */
+    /** Each realm keeps its own level; the hole's carries over from before there were realms. */
+    private String levelKey(int i) {
+        return i == 0 ? "level" : "level-" + realms[i].key();
+    }
+
     private int levelOf(int i) {
-        return Math.max(1, host.pref(i == 0 ? "level" : "level" + i, 1));
+        return Math.max(1, host.pref(levelKey(i), 1));
     }
 
     private void saveLevel() {
-        host.setPref(realmIndex == 0 ? "level" : "level" + realmIndex, level);
+        host.setPref(levelKey(realmIndex), level);
     }
 
     void resize(int width, int height) {

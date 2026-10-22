@@ -3,8 +3,8 @@
 <img src="docs/icon.png" width="96" align="right" alt="">
 
 Table tennis where physics bends. The table stands in a strange place, and
-something floats over the net that changes how the ball flies: a black hole
-that pulls it in, an atomic nucleus that throws it back. Every law can be seen
+something there changes how the ball flies: a black hole that pulls it in, a
+turning station that curves it, an atomic nucleus that throws it back. Every law can be seen
 before the ball obeys it: the grid on the table bends with the force, the
 ball's tail draws its path, and the room itself gives a hint.
 
@@ -16,6 +16,10 @@ is computed pixel by pixel on the processor, and the sounds are synthesized.
 - **The hole.** A black hole drifts over the net. It pulls the ball, harder the
   closer it passes, and keeps whatever crosses its horizon. The grid on the
   table falls toward it like a funnel; it hums louder as the ball comes near.
+- **The station.** A glass deck on a station turning in orbit. The turning
+  room itself curves every ball, the same way from either end, and through the
+  glass the stars and the planet wheel round at the rate of the spin: the ball
+  turns the way the sky turns.
 - **The nucleus, 1911.** A laboratory of boards, brass and chalk. An atomic
   nucleus pushes the ball away; a ball that comes straight at it may be thrown
   back to the side it came from. The grid is pressed into a knot under it, and

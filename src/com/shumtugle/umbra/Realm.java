@@ -15,6 +15,9 @@ abstract class Realm {
     float x, z = Game.NZ;
     float power = 1f;
 
+    /** A short stable name for saved settings. */
+    abstract String key();
+
     abstract String name();
 
     /** One line of what it does, for the title screen. */
@@ -85,6 +88,11 @@ abstract class Realm {
     abstract float bendA();
 
     abstract float bendC();
+
+    /** A turn of the grid about the centre, in radians at the centre; 0 for none. */
+    float swirl() {
+        return 0f;
+    }
 
     /** Light the thing throws on the table: colour, strength, and its glossy reflection. */
     abstract int light();

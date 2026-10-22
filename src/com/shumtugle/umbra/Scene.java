@@ -232,7 +232,7 @@ final class Scene {
         final int[] a = f.a;
         final Realm rl = realm;
         final float hx = rl.x, hz = rl.z, hy = rl.height();
-        final float bendA = rl.bendA(), bendC = rl.bendC(), gridGain = rl.gridGain();
+        final float bendA = rl.bendA(), bendC = rl.bendC(), gridGain = rl.gridGain(), swirl = rl.swirl();
         final int gc = rl.grid(), lc = rl.light(), rc = rl.ripple();
         final float gR = (gc >> 16) & 255, gG = (gc >> 8) & 255, gB = gc & 255;
         final float lR = (lc >> 16) & 255, lG = (lc >> 8) & 255, lB = lc & 255;
@@ -257,7 +257,16 @@ final class Scene {
             float dx = hx - x, dz = hz - z;
             float r2 = dx * dx + dz * dz;
             float k = bendA / (r2 + bendC);
-            float gx = (x + dx * k) * (1f / GRID) + 64f, gz = (z + dz * k) * (1f / GRID) + 64f;
+            float px = x + dx * k, pz = z + dz * k;
+            if (swirl != 0f) {
+                // turned about the centre, more near it: a bijection, so it never folds either
+                float ang = swirl / (1f + r2 * 0.8f), a2 = ang * ang;
+                float sn = ang * (1f - a2 / 6f * (1f - a2 / 20f)), cs = 1f - a2 / 2f * (1f - a2 / 12f);
+                float ux = px - hx, uz = pz - hz;
+                px = hx + ux * cs - uz * sn;
+                pz = hz + ux * sn + uz * cs;
+            }
+            float gx = px * (1f / GRID) + 64f, gz = pz * (1f / GRID) + 64f;
             float fx = gx - (int) gx, fz = gz - (int) gz;
             float lx = (fx < 0.5f ? fx : 1f - fx) * GRID, lz = (fz < 0.5f ? fz : 1f - fz) * GRID;
             float lw = Math.max(0.006f, foot * 0.55f), inv = 1f / foot;

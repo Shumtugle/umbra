@@ -1,15 +1,16 @@
-# Every realm: the title, then a rally.
+# Every realm: its title, then a rally.
 screen 1096 2560
 wait 0.8
 shot r0_title
 realm 1
 wait 0.8
 shot r1_title
+realm 2
+wait 0.8
+shot r2_title
 tap 137 300
 bot on
 wait 6
-shot r1_rally_a
+shot r2_rally_a
 wait 0.35
-shot r1_rally_b
-wait 0.35
-shot r1_rally_c
+shot r2_rally_b

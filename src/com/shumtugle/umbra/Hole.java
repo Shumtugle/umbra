@@ -22,6 +22,11 @@ final class Hole extends Realm {
     private Sky sky;
 
     @Override
+    String key() {
+        return "hole";
+    }
+
+    @Override
     String name() {
         return "THE HOLE";
     }

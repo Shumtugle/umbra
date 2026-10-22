@@ -8,7 +8,7 @@ package com.shumtugle.umbra;
  * output to its speaker, the stand writes it to a file.
  */
 final class Synth {
-    static final int HUM_DRONE = 0, HUM_MAINS = 1;
+    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2;
 
     final int rate;
     private final float[][] bank = new float[12][];
@@ -24,7 +24,7 @@ final class Synth {
     // the hum: targets set from the game, values eased toward them per sample
     private volatile float humLevelT, humNearT;
     private volatile int humKind;
-    private float crackle, crackleLp;
+    private float crackle, crackleLp, phSwell;
     private float humLevel, humNear, ph1, ph2, ph3, svfLow, svfBand;
     private int seed = 0x2545F491;
 
@@ -276,7 +276,7 @@ final class Synth {
             qCount = 0;
         }
         float lt = humLevelT, nt = humNearT;
-        boolean mains = humKind == HUM_MAINS;
+        boolean mains = humKind == HUM_MAINS, station = humKind == HUM_STATION;
         float ease = 1f - (float) Math.exp(-1.0 / (0.06 * rate));
         float twoPi = 6.2831853f / rate;
         for (int s = 0; s < n; s++) {
@@ -297,7 +297,7 @@ final class Synth {
             // the hum: a low drone that rises and thickens as the ball comes near, and a thin whine
             humLevel += (lt - humLevel) * ease;
             humNear += (nt - humNear) * ease;
-            float f0 = mains ? 25f : 41f * (1f + 0.4f * humNear);
+            float f0 = mains ? 25f : station ? 33f : 41f * (1f + 0.4f * humNear);
             ph1 += f0 * twoPi;
             ph2 += f0 * 2.003f * twoPi;
             ph3 += f0 * 1.498f * twoPi;
@@ -305,7 +305,18 @@ final class Synth {
             if (ph2 > 6.2831853f) ph2 -= 6.2831853f;
             if (ph3 > 6.2831853f) ph3 -= 6.2831853f;
             float hum;
-            if (mains) {
+            if (station) {
+                // the station: a low machine rumble, air moving in ducts, and a slow swell as it turns
+                float rumble = (float) (Math.sin(ph1) * 0.6 + Math.sin(ph2) * 0.3);
+                float nz = noise();
+                svfLow += 0.02f * svfBand;
+                float high = nz - svfLow - 0.5f * svfBand;
+                svfBand += 0.02f * high;
+                phSwell += 0.21f * twoPi;
+                if (phSwell > 6.2831853f) phSwell -= 6.2831853f;
+                float swell = 0.6f + 0.4f * (float) Math.sin(phSwell);
+                hum = humLevel * (rumble * 0.06f + svfBand * 0.05f * swell);
+            } else if (mains) {
                 // the buzz of a laboratory: a transformer's hum, and sparks as the ball comes near
                 float buzz = (float) (Math.sin(ph1 * 2.0) * 0.35 + Math.sin(ph1 * 4.0) * 0.5 + Math.sin(ph1 * 6.0) * 0.2 + Math.sin(ph1 * 8.0) * 0.12);
                 float nz = noise();

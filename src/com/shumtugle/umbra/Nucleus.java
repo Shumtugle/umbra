@@ -20,6 +20,11 @@ final class Nucleus extends Realm {
     static final int CHALK = 0xFFEDEBDD;
 
     @Override
+    String key() {
+        return "nucleus";
+    }
+
+    @Override
     String name() {
         return "THE NUCLEUS";
     }

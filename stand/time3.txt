@@ -1,0 +1,6 @@
+screen 1096 2560
+realm 1
+tap 137 300
+bot on
+wait 3
+time 1500
