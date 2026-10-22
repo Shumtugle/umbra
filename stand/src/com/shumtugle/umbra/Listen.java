@@ -49,9 +49,9 @@ public final class Listen {
                 s.hum(mains ? Synth.HUM_MAINS : Synth.HUM_DRONE, 1f, near * near);
                 s.render(tmp, block);
                 System.arraycopy(tmp, 0, out, i, Math.min(block, n - i));
-        }
-        write(new File(dir, mains ? "scene_lab.wav" : "scene_space.wav"), out, rate);
-        report(mains ? "lab" : "space", out);
+            }
+            write(new File(dir, mains ? "scene_lab.wav" : "scene_space.wav"), out, rate);
+            report(mains ? "lab" : "space", out);
         }
     }
 
