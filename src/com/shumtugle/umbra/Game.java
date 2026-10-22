@@ -255,9 +255,12 @@ final class Game {
             time = num > 0f ? (float) Math.sqrt(num / (Ball.G * s * (1f - s))) : 0.24f;
         }
         time = Math.max(0.24f, Math.min(1.1f, time));
-        b.vx = (tx - b.x) / time;
-        b.vz = (tz - b.z) / time;
-        b.vy = (Ball.R - b.y + 0.5f * Ball.G * time * time) / time;
+        b.impetus = 0f;
+        if (!realm.launch(b, side, tx, tz, yn, power)) {
+            b.vx = (tx - b.x) / time;
+            b.vz = (tz - b.z) / time;
+            b.vy = (Ball.R - b.y + 0.5f * Ball.G * time * time) / time;
+        }
         lastSpeed = (float) Math.sqrt(b.vx * b.vx + b.vz * b.vz);
         shots++;
         pad[side].swing = 1f;

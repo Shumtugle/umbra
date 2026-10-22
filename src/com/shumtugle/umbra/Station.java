@@ -350,6 +350,17 @@ final class Station extends Realm {
         return Synth.HUM_STATION;
     }
 
+    // composite blades with a safety-orange edge and a rubber-wrapped grip
+    private static final Racket MINE = new Racket(0xFFE0402E, 0xFFFF9A84, 0xFF6A1410, 0xFF8A3A0C, 0xFFFF9A3A,
+            0xFF2A2E36, 0xFF5A6270, 0xFFFF8A2A, 0, 0.03f);
+    private static final Racket THEIRS = new Racket(0xFF2E5A8A, 0xFF8FC0F0, 0xFF0C1C30, 0xFF8A3A0C, 0xFFFF9A3A,
+            0xFF2A2E36, 0xFF5A6270, 0xFFFF8A2A, 0xFFFFB45A, 0.03f);
+
+    @Override
+    Racket racket(boolean player) {
+        return player ? MINE : THEIRS;
+    }
+
     /**
      * Lanes of light on the table, each the path of a typical ball: one hit away
      * from you, one coming back. Dashes run along them in the direction of flight.

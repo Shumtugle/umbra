@@ -1,5 +1,20 @@
 # Changes
 
+## 0.4
+
+- The Lyceum, 335 BC: the physics of the ancients, played as if it were true.
+  A struck ball flies in a straight line while its impetus lasts, then falls
+  straight down to its natural place. The harder the swing, the faster and
+  flatter the line. A line to where the impetus ends, a plumb line and a ring
+  on the table show where the ball will fall; a ring round the ball shrinks as
+  the impetus is spent. Under the table, the cosmos in mosaic. Cicadas.
+- Realms come in a shuffled order: every visit begins at the hole, then each
+  match is played in another realm, all of them before any comes twice. One
+  level for the whole game again.
+- Paddles belong to their realm: black edges in space, composite and safety
+  orange on the station, cork and brass in the laboratory, painted olive wood
+  in the Lyceum.
+
 ## 0.3
 
 - The station: a table on a glass deck of a station turning in orbit. Nothing

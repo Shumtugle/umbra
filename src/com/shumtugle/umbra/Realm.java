@@ -42,6 +42,18 @@ abstract class Realm {
     /** Moves the ball for h seconds at time t. True when the ball is taken out of play. */
     abstract boolean act(Ball b, float t, float h);
 
+    /**
+     * A realm that strikes the ball its own way sets its velocity here and returns
+     * true; tx, tz is where the hitter aimed, yn the height it meant to cross the
+     * net at, power how hard the swing was. Otherwise the ball flies a plain arc.
+     */
+    boolean launch(Ball b, int side, float tx, float tz, float yn, float power) {
+        return false;
+    }
+
+    /** Marks drawn with the ball, under it: where it is going, and how. */
+    void drawGuide(Scene s, Px f, Game g) {}
+
     /** A first-game hint that names the law. */
     abstract String hint();
 
@@ -123,6 +135,11 @@ abstract class Realm {
     abstract int netTape();
 
     abstract int ripple();
+
+    /** How the paddles look here: the player's, or the opponent's. */
+    Racket racket(boolean player) {
+        return player ? Racket.PLAYER : Racket.OPPONENT;
+    }
 
     /** The warm side of the ball faces the thing in this colour. */
     abstract int rimLight();

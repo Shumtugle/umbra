@@ -174,6 +174,17 @@ final class Hole extends Realm {
         return Synth.HUM_DRONE;
     }
 
+    // black edges that catch the disk's light, as if cut from the dark itself
+    private static final Racket MINE = new Racket(0xFFD8352B, 0xFFFF8E7A, 0xFF7A120E, 0xFF0A0A12, 0xFF5A4A6A,
+            0xFF1A1622, 0xFF6A5A7A, 0xFFFF9A48, 0, 0.05f);
+    private static final Racket THEIRS = new Racket(0xFF3C2E7A, 0xFF8C7CE0, 0xFF140E30, 0xFF0A0A12, 0xFF5A4A6A,
+            0xFF1A1622, 0xFF6A5A7A, 0xFFFF9A48, 0xFF7FE8FF, 0.05f);
+
+    @Override
+    Racket racket(boolean player) {
+        return player ? MINE : THEIRS;
+    }
+
     /**
      * The hole bends the light of everything behind it into a ring, then shows its
      * own: the black shadow, a thin bright ring of light that orbits just outside it,

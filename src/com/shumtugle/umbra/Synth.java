@@ -8,7 +8,7 @@ package com.shumtugle.umbra;
  * output to its speaker, the stand writes it to a file.
  */
 final class Synth {
-    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2;
+    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3;
 
     final int rate;
     private final float[][] bank = new float[12][];
@@ -24,7 +24,7 @@ final class Synth {
     // the hum: targets set from the game, values eased toward them per sample
     private volatile float humLevelT, humNearT;
     private volatile int humKind;
-    private float crackle, crackleLp, phSwell;
+    private float crackle, crackleLp, phSwell, cicLow, cicBand, phCic, phChorus, wind;
     private float humLevel, humNear, ph1, ph2, ph3, svfLow, svfBand;
     private int seed = 0x2545F491;
 
@@ -276,7 +276,8 @@ final class Synth {
             qCount = 0;
         }
         float lt = humLevelT, nt = humNearT;
-        boolean mains = humKind == HUM_MAINS, station = humKind == HUM_STATION;
+        boolean mains = humKind == HUM_MAINS, station = humKind == HUM_STATION, cicadas = humKind == HUM_CICADAS;
+        float cicF = 2f * (float) Math.sin(Math.PI * 5600.0 / rate);
         float ease = 1f - (float) Math.exp(-1.0 / (0.06 * rate));
         float twoPi = 6.2831853f / rate;
         for (int s = 0; s < n; s++) {
@@ -305,7 +306,21 @@ final class Synth {
             if (ph2 > 6.2831853f) ph2 -= 6.2831853f;
             if (ph3 > 6.2831853f) ph3 -= 6.2831853f;
             float hum;
-            if (station) {
+            if (cicadas) {
+                // a summer courtyard: a soft wind, and cicadas singing in long phrases
+                float nz = noise();
+                wind += (nz - wind) * 0.004f;
+                phChorus += 0.17f * twoPi;
+                if (phChorus > 6.2831853f) phChorus -= 6.2831853f;
+                phCic += 31f * twoPi;
+                if (phCic > 6.2831853f) phCic -= 6.2831853f;
+                cicLow += cicF * cicBand;
+                float high = nz - cicLow - 0.06f * cicBand;
+                cicBand += cicF * high;
+                float phrase = Col.clamp01((float) Math.sin(phChorus) * 1.6f);
+                float pulse = 0.5f + 0.5f * (float) Math.sin(phCic);
+                hum = humLevel * (wind * 0.5f + cicBand * 0.035f * phrase * pulse * pulse);
+            } else if (station) {
                 // the station: a low machine rumble, air moving in ducts, and a slow swell as it turns
                 float rumble = (float) (Math.sin(ph1) * 0.6 + Math.sin(ph2) * 0.3);
                 float nz = noise();

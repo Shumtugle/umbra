@@ -308,6 +308,17 @@ final class Nucleus extends Realm {
         return Synth.HUM_MAINS;
     }
 
+    // the early bats: a face of cork or pimpled rubber on a plain board, a turned handle
+    private static final Racket MINE = new Racket(0xFFB8402E, 0xFFE88A6A, 0xFF5A1A10, 0xFF5A3A1C, 0xFFC89858,
+            0xFF7A4E28, 0xFFC8955A, 0xFFE2B45A, 0, 0.22f);
+    private static final Racket THEIRS = new Racket(0xFF3A5A40, 0xFF8AB890, 0xFF102018, 0xFF5A3A1C, 0xFFC89858,
+            0xFF7A4E28, 0xFFC8955A, 0xFFE2B45A, 0xFFEDEBDD, 0.22f);
+
+    @Override
+    Racket racket(boolean player) {
+        return player ? MINE : THEIRS;
+    }
+
     /** Chalk arrows round the nucleus on the table, drifting outward. */
     @Override
     void drawOnTable(Scene s, Px f, Game g, float t) {

@@ -116,7 +116,7 @@ final class Bot {
             t += 1f / 240f;
             if (s.gone) break;
             if (b && s.z < Game.NZ) landed = true;
-            if (landed && s.y >= 0.10f && s.y <= 0.40f && s.vz < 0f && s.z < 0.6f && s.z > -0.75f) {
+            if (landed && s.y >= 0.10f && s.y <= 0.40f && s.vz < 0.05f && s.z < Game.FRONT - 0.05f && s.z > -0.75f) {
                 ix = s.x;
                 iz = s.z;
                 hitAt = now + t;

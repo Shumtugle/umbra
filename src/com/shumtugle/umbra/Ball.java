@@ -16,6 +16,8 @@ final class Ball {
 
     float x, y, z, vx, vy, vz;
     boolean gone;
+    // for realms where a struck ball carries a push of its own: how long it lasts, and where it ends
+    float impetus, impetus0, aimX, aimY, aimZ;
 
     void set(Ball o) {
         x = o.x;
@@ -25,6 +27,11 @@ final class Ball {
         vy = o.vy;
         vz = o.vz;
         gone = o.gone;
+        impetus = o.impetus;
+        impetus0 = o.impetus0;
+        aimX = o.aimX;
+        aimY = o.aimY;
+        aimZ = o.aimZ;
     }
 
     static boolean onTable(float x, float z) {
@@ -45,6 +52,7 @@ final class Ball {
         z += vz * h;
         if (y <= R && vy < 0f && onTable(x, z)) {
             y = R;
+            impetus = 0f;
             vy = -vy * RESTITUTION;
             vx *= GRIP;
             vz *= GRIP;
@@ -62,6 +70,7 @@ final class Ball {
             // the mesh: it swallows most of the speed and drops the ball on its own side
             if (vz * side >= 0f) return NONE;
             z = Game.NZ + side * R;
+            impetus = 0f;
             vz = -vz * 0.12f;
             vx *= 0.5f;
             vy = vy > 0f ? vy * 0.3f : vy * 0.6f;
@@ -79,6 +88,7 @@ final class Ball {
         vy = ty * 0.82f - 0.3f * vn * ny;
         vz = tz * 0.82f - 0.3f * vn * nz;
         vx *= 0.9f;
+        impetus = 0f;
         y = Game.NH + ny * R;
         z = Game.NZ + nz * R;
         return CORD;

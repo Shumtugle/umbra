@@ -33,12 +33,18 @@ final class Ai {
         return s.z <= 0.45f && s.z >= -0.75f && s.vz < 0f;
     }
 
+    private boolean inReach(Ball s) {
+        if (s.y < 0.10f || s.y > 0.45f) return false;
+        if (side == 1) return s.z >= Game.L - Game.FRONT + 0.05f && s.vz > -0.3f;
+        return s.z <= Game.FRONT - 0.05f && s.vz < 0.3f;
+    }
+
     /** The other side has just hit the ball: read where it will come down and set off for it. */
     void plan(Game g) {
         Ball s = new Ball();
         s.set(g.ball);
-        boolean landed = false, found = false;
-        float ix = 0f, iz = homeZ();
+        boolean landed = false, found = false, spare = false;
+        float ix = 0f, iz = homeZ(), sx = 0f, sz = 0f;
         final float h = 1f / 240f;
         float t = g.clock;
         for (int i = 0; i < 960; i++) {
@@ -52,9 +58,18 @@ final class Ai {
                 found = true;
                 break;
             }
+            // a ball that stops short, over the table, can still be met where it is
+            if (landed && !spare && inReach(s)) {
+                spare = true;
+                sx = s.x;
+                sz = s.z;
+            }
             if (s.y < -0.5f) break;
         }
-        if (!found) {
+        if (!found && spare) {
+            ix = sx;
+            iz = sz;
+        } else if (!found) {
             ix = s.x;                 // it cannot be reached, but a player still runs for it
             iz = homeZ();
         }

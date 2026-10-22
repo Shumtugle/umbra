@@ -349,6 +349,7 @@ final class Scene {
         if (g.state == Game.OVER) return;
         Ball b = g.ball;
         tail(f);
+        realm.drawGuide(this, f, g);
         if (b.gone) {
             swallowed(f, g);
             return;
@@ -428,37 +429,28 @@ final class Scene {
         float sx = cam.sx, sy = cam.sy, sc = cam.scale();
         float rx = 0.125f * sc, ry = rx * 0.86f;
         boolean near = p.side == 0;
+        Racket k = realm.racket(player);
         // the handle points back toward its own player
         if (!cam.project(p.x + (near ? 0.025f : -0.025f), Game.PY - 0.03f, p.z + (near ? -0.25f : 0.25f))) return;
         float hx = cam.sx, hy = cam.sy;
         float ax = sx + (hx - sx) * 0.45f, ay = sy + (hy - sy) * 0.45f;
         float hw = Math.max(2f, 0.042f * sc);
-        f.lineAA(ax, ay, hx, hy, hw + 1.2f, 0xFF2A1A10, 1f);
-        f.lineAA(ax, ay, hx, hy, hw, 0xFFA8733E, 1f);
-        f.lineAA(ax - hw * 0.15f, ay, hx - hw * 0.15f, hy, Math.max(0.8f, hw * 0.3f), 0xFFE0B07A, 0.8f);
-        f.discAA(hx, hy, hw * 0.62f, 0xFF7A4E28, 1f);
-        int rub, light, dark;
-        if (player) {
-            rub = 0xFFD8352B;
-            light = 0xFFFF8E7A;
-            dark = 0xFF7A120E;
-        } else {
-            rub = 0xFF3C2E7A;
-            light = 0xFF8C7CE0;
-            dark = 0xFF140E30;
-        }
-        // a dark outline, then the blade: a wooden edge round a rubber face lit from the upper left
+        f.lineAA(ax, ay, hx, hy, hw + 1.2f, Col.mul(k.handle, 0.25f), 1f);
+        f.lineAA(ax, ay, hx, hy, hw, k.handle, 1f);
+        f.lineAA(ax - hw * 0.15f, ay, hx - hw * 0.15f, hy, Math.max(0.8f, hw * 0.3f), k.handleLight, 0.8f);
+        f.discAA(hx, hy, hw * 0.62f, k.handleEnd, 1f);
+        // a dark outline, then the blade: an edge round a face lit from the upper left
         f.ellipseAA(sx, sy, rx + 1.4f, ry + 1.4f, 0xFF120A06, 1f);
-        blade(f, sx, sy, rx, ry, rub, dark, light);
-        if (!player) f.ringAA(sx, sy, rx + 0.8f, ry + 0.8f, 1f, realm.tail(), 0.35f);
+        blade(f, sx, sy, rx, ry, k);
+        if (k.glow != 0) f.ringAA(sx, sy, rx + 0.8f, ry + 0.8f, 1f, k.glow, 0.35f);
         if (p.swing > 0f) f.ringAA(sx, sy, rx + 2f + 4f * (1f - p.swing), ry + 2f + 4f * (1f - p.swing), 1.2f, 0xFFFFFFFF, 0.5f * p.swing);
     }
 
-    private static void blade(Px f, float cx, float cy, float rx, float ry, int rub, int dark, int light) {
+    private static void blade(Px f, float cx, float cy, float rx, float ry, Racket k) {
         int x0 = (int) Math.floor(cx - rx - 1), x1 = (int) Math.ceil(cx + rx + 1);
         int y0 = (int) Math.floor(cy - ry - 1), y1 = (int) Math.ceil(cy + ry + 1);
         float e = 1f / Math.min(rx, ry);
-        float woodIn = 1f - Math.max(1.3f, 0.06f * rx) * e;
+        float edgeIn = 1f - Math.max(1.3f, 0.06f * rx) * e;
         for (int y = y0; y <= y1; y++)
             for (int x = x0; x <= x1; x++) {
                 float u = (x + 0.5f - cx) / rx, v = (y + 0.5f - cy) / ry;
@@ -467,17 +459,17 @@ final class Scene {
                 if (cov <= 0f) continue;
                 float lit = Col.clamp01(0.5f - 0.42f * u - 0.55f * v);
                 int c;
-                if (d > woodIn) {
-                    c = Col.mix(0xFF8A5A30, 0xFFE2B47C, lit);
+                if (d > edgeIn) {
+                    c = Col.mix(k.edgeDark, k.edgeLight, lit);
                 } else {
-                    float grain = (Col.hash(x * 3 + 1, y * 5 + 2) - 0.5f) * 0.08f;
-                    c = Col.mix(dark, rub, Col.clamp01(0.35f + 0.75f * lit + grain));
-                    // a soft sheen along the lit rim, as on a curved rubber face
-                    float rim = Col.ramp(0.55f, 0.92f, d / woodIn) * Col.clamp01(-0.6f * u - 0.8f * v);
-                    c = Col.mix(c, light, rim * 0.55f);
-                    // the inner edge of the wood casts a thin line on the rubber
-                    float lip = Col.ramp(woodIn - 1.5f * e, woodIn, d);
-                    c = Col.mix(c, dark, lip * 0.6f);
+                    float grain = (Col.hash(x * 3 + 1, y * 5 + 2) - 0.5f) * k.grain;
+                    c = Col.mix(k.faceDark, k.face, Col.clamp01(0.35f + 0.75f * lit + grain));
+                    // a soft sheen along the lit rim, as on a curved face
+                    float rim = Col.ramp(0.55f, 0.92f, d / edgeIn) * Col.clamp01(-0.6f * u - 0.8f * v);
+                    c = Col.mix(c, k.faceLight, rim * 0.55f);
+                    // the inner edge casts a thin line on the face
+                    float lip = Col.ramp(edgeIn - 1.5f * e, edgeIn, d);
+                    c = Col.mix(c, k.faceDark, lip * 0.6f);
                 }
                 f.blend(x, y, c, Math.min(1f, cov));
             }

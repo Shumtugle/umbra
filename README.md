@@ -4,7 +4,8 @@
 
 Table tennis where physics bends. The table stands in a strange place, and
 something there changes how the ball flies: a black hole that pulls it in, a
-turning station that curves it, an atomic nucleus that throws it back. Every law can be seen
+turning station that curves it, an atomic nucleus that throws it back, the
+physics of the ancients that sends it straight and then drops it. Every law can be seen
 before the ball obeys it: the grid on the table bends with the force, the
 ball's tail draws its path, and the room itself gives a hint.
 
@@ -13,6 +14,9 @@ is computed pixel by pixel on the processor, and the sounds are synthesized.
 
 ## Realms
 
+- **The Lyceum, 335 BC.** The physics of the ancients, as if it were true: a
+  ball flies straight while its impetus lasts, then falls to its natural place.
+  A line and a plumb line show where; the cosmos lies in mosaic underfoot.
 - **The hole.** A black hole drifts over the net. It pulls the ball, harder the
   closer it passes, and keeps whatever crosses its horizon. The grid on the
   table falls toward it like a funnel; it hums louder as the ball comes near.
@@ -25,8 +29,9 @@ is computed pixel by pixel on the processor, and the sounds are synthesized.
   back to the side it came from. The grid is pressed into a knot under it, and
   the blackboard shows how particles scatter on a nucleus.
 
-Each realm has its own levels. With every level the opponent is quicker and
-steadier, and the realm's force is stronger: the bend in the grid shows how
+Every visit begins at the hole; after that each match is played in another
+realm, in a shuffled order. With every level the opponent is quicker and
+steadier, and each realm's force is stronger: the bend in the grid shows how
 much.
 
 ## Playing
@@ -36,7 +41,6 @@ much.
 - Put the ring under the ball after it bounces on your side. Swipe forward to
   hit hard: a hard ball is fast but crosses the net low.
 - Lift the finger to serve.
-- Swipe sideways on the title screen to choose a realm.
 - The net is real: the mesh stops the ball, the cord deflects it. A serve that
   touches the net and still lands right is played again.
 
