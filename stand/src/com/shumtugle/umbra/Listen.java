@@ -14,7 +14,7 @@ import java.io.IOException;
  *   java ... Listen out/sound
  */
 public final class Listen {
-    private static final String[] NAMES = {"paddle", "table", "net", "cord", "gone", "point", "loss", "won", "lost", "let", "start", "tick"};
+    private static final String[] NAMES = {"paddle", "table", "net", "cord", "gone", "point", "loss", "won", "lost", "let", "start", "tick", "shot"};
 
     public static void main(String[] args) throws IOException {
         File dir = new File(args.length > 0 ? args[0] : "out/sound");

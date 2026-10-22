@@ -17,6 +17,9 @@ is computed pixel by pixel on the processor, and the sounds are synthesized.
 - **The Lyceum, 335 BC.** The physics of the ancients, as if it were true: a
   ball flies straight while its impetus lasts, then falls to its natural place.
   A line and a plumb line show where; the cosmos lies in mosaic underfoot.
+- **The Black River, 1837.** A winter evening and a duel with paddles. The wind
+  carries the ball, and the snow shows the wind; come forward to your barrier
+  to strike harder; one shot each a match, with a crack and gunsmoke.
 - **The hole.** A black hole drifts over the net. It pulls the ball, harder the
   closer it passes, and keeps whatever crosses its horizon. The grid on the
   table falls toward it like a funnel; it hums louder as the ball comes near.
@@ -41,6 +44,7 @@ much.
 - Put the ring under the ball after it bounces on your side. Swipe forward to
   hit hard: a hard ball is fast but crosses the net low.
 - Lift the finger to serve.
+- Where a realm gives you a shot, a very fast forward swipe fires it.
 - The net is real: the mesh stops the ball, the cord deflects it. A serve that
   touches the net and still lands right is played again.
 

@@ -8,10 +8,10 @@ package com.shumtugle.umbra;
  * output to its speaker, the stand writes it to a file.
  */
 final class Synth {
-    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3;
+    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3, HUM_BLIZZARD = 4;
 
     final int rate;
-    private final float[][] bank = new float[12][];
+    private final float[][] bank = new float[13][];
 
     private static final int VOICES = 16, QUEUE = 32;
     private final Object lock = new Object();
@@ -67,6 +67,7 @@ final class Synth {
         bank[Game.C_LOST] = bells(new float[]{440, 349, 294, 220}, 0.16f, 1.8f, 1f, 0.45f);
         bank[Game.C_LET] = let();
         bank[Game.C_START] = start();
+        bank[Game.C_SHOT] = shot();
         bank[Game.C_TICK] = knock(0.05f, new float[]{1800, 3900}, new float[]{120, 200}, new float[]{0.5f, 0.2f},
                 0f, 1f, 0f, 2000f, 0.15f);
     }
@@ -177,6 +178,23 @@ final class Synth {
         return norm(o, 0.7f);
     }
 
+    /** A pistol: a dry crack, a heavy boom under it, and the report rolling away. */
+    private float[] shot() {
+        int n = (int) (1.4f * rate);
+        float[] o = new float[n];
+        float lp = 0f;
+        for (int i = 0; i < n; i++) {
+            float t = i / (float) rate;
+            float nz = noise();
+            lp += (nz - lp) * (0.5f * (float) Math.exp(-t * 6f) + 0.02f);
+            float crack = nz * (float) Math.exp(-t * 90f);
+            float boom = sin(6.2831853 * 55f * t) * (float) Math.exp(-t * 7f) + sin(6.2831853 * 170f * t) * (float) Math.exp(-t * 20f) * 0.5f;
+            float roll = lp * (float) Math.exp(-t * 2.8f) * 1.4f;
+            o[i] = crack * 1.2f + boom * 0.8f + roll;
+        }
+        return norm(o, 0.95f);
+    }
+
     private float[] let() {
         int n = (int) (0.3f * rate);
         float[] o = new float[n];
@@ -276,7 +294,8 @@ final class Synth {
             qCount = 0;
         }
         float lt = humLevelT, nt = humNearT;
-        boolean mains = humKind == HUM_MAINS, station = humKind == HUM_STATION, cicadas = humKind == HUM_CICADAS;
+        boolean mains = humKind == HUM_MAINS, station = humKind == HUM_STATION, cicadas = humKind == HUM_CICADAS,
+                blizzard = humKind == HUM_BLIZZARD;
         float cicF = 2f * (float) Math.sin(Math.PI * 5600.0 / rate);
         float ease = 1f - (float) Math.exp(-1.0 / (0.06 * rate));
         float twoPi = 6.2831853f / rate;
@@ -306,7 +325,17 @@ final class Synth {
             if (ph2 > 6.2831853f) ph2 -= 6.2831853f;
             if (ph3 > 6.2831853f) ph3 -= 6.2831853f;
             float hum;
-            if (cicadas) {
+            if (blizzard) {
+                // the wind: noise through a resonance that rises and howls with the gusts
+                float nz = noise();
+                float fc = (220f + 700f * humNear + 80f * (float) Math.sin(ph3 * 0.5f)) / rate;
+                float fq = 2f * (float) Math.sin(Math.PI * fc);
+                svfLow += fq * svfBand;
+                float high = nz - svfLow - 0.12f * svfBand;
+                svfBand += fq * high;
+                wind += (nz - wind) * 0.01f;
+                hum = humLevel * (svfBand * (0.05f + 0.12f * humNear) + wind * 0.4f);
+            } else if (cicadas) {
                 // a summer courtyard: a soft wind, and cicadas singing in long phrases
                 float nz = noise();
                 wind += (nz - wind) * 0.004f;

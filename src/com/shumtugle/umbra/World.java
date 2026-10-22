@@ -11,7 +11,7 @@ package com.shumtugle.umbra;
  * and each game pixel is a whole number of screen pixels.
  */
 final class World implements Game.Sink {
-    static final String VERSION = "0.4";   // shown on screen; keep in step with versionName
+    static final String VERSION = "0.5";   // shown on screen; keep in step with versionName
     static final int TARGET_W = 270;       // about this many game pixels across
 
     static final int DOWN = 0, MOVE = 1, UP = 2;
@@ -43,7 +43,7 @@ final class World implements Game.Sink {
     float lift;                            // the paddle rides this far above the finger
     int screen = MENU;
     int level, won, lost;
-    final Realm[] realms = {new Hole(), new Station(), new Nucleus(), new Lyceum()};
+    final Realm[] realms = {new Hole(), new Station(), new Nucleus(), new Lyceum(), new River()};
     int realmIndex;
     java.util.Random shuffle = new java.util.Random(System.nanoTime());
     private int[] bag = new int[0];
@@ -284,6 +284,9 @@ final class World implements Game.Sink {
         text(f, b, w - m - PixelFont.width(b, 3), 18, 3, 0xFFF2F6FA);
         String lv = "LEVEL " + level;
         text(f, lv, (w - PixelFont.width(lv, 1)) / 2, 7, 1, 0xFF8FA4CC);
+        // shots still in hand, where the realm has them: a small pistol for each
+        for (int side = 0; side < 2; side++)
+            for (int k = 0; k < g.shotsLeft[side]; k++) pistol(f, side == 0 ? m + k * 14 : w - m - 11 - k * 14, 42, side == 1);
         // who serves: a small ball by that side's score
         float sx = g.server == 0 ? m + PixelFont.width(a, 3) + 7 : w - m - PixelFont.width(b, 3) - 7;
         f.discAA(sx, 28, 2.6f, 0xFFF6F3EC, 1f);
@@ -295,6 +298,23 @@ final class World implements Game.Sink {
             shade(f, y - 10, y + 26, 1f - 0.45f * k);
             center(f, g.msg, y, 2, Col.mix(0xFF000000, col, k));
         }
+    }
+
+    private static final String[] PISTOL = {
+            "##########.",
+            "#########..",
+            ".####......",
+            "####.......",
+            "###........"};
+
+    private static void pistol(Px f, int x, int y, boolean flip) {
+        for (int r = 0; r < PISTOL.length; r++)
+            for (int c = 0; c < PISTOL[r].length(); c++) {
+                if (PISTOL[r].charAt(c) != '#') continue;
+                int px = flip ? x + PISTOL[r].length() - 1 - c : x + c;
+                f.rect(px + 1, y + r + 1, px + 2, y + r + 2, 0xFF02030A);
+                f.rect(px, y + r, px + 1, y + r + 1, r == 0 ? 0xFFD8DEE6 : 0xFFB89870);
+            }
     }
 
     private void hints(Px f) {

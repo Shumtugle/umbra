@@ -24,7 +24,8 @@ final class Game {
 
     static final int SERVE = 0, RALLY = 1, POINT = 2, OVER = 3;
     static final int C_PADDLE = 0, C_TABLE = 1, C_NET = 2, C_CORD = 3, C_GONE = 4, C_POINT = 5, C_LOSS = 6,
-            C_WON = 7, C_LOST = 8, C_LET = 9, C_START = 10, C_TICK = 11;
+            C_WON = 7, C_LOST = 8, C_LET = 9, C_START = 10, C_TICK = 11, C_SHOT = 12;
+    static final float SHOT_SWING = 2.1f;   // a forward swipe this fast, in m/s, fires a shot where shots exist
     static final int TO_WIN = 11;
 
     interface Sink {
@@ -107,6 +108,7 @@ final class Game {
     float goneAge = 9f;                          // time since the realm took the ball
     private float lastNetCue = -1f;
     int shots, points;          // strikes and points so far, counted for the stand
+    final int[] shotsLeft = new int[2];   // shots each side may still fire this match, where the realm allows
     int nets, gones;            // how many points ended in the net or were taken by the realm
     String lastReason = "";
     int lastWinner = -1;
@@ -123,6 +125,7 @@ final class Game {
         human = humanPlays;
         ai[0].skill = ai[1].skill = skill;
         score[0] = score[1] = 0;
+        shotsLeft[0] = shotsLeft[1] = realm.shots();
         winner = -1;
         firstServer = rnd.nextInt(2);
         pad[0].place(0f, -0.25f);
@@ -220,7 +223,7 @@ final class Game {
             wobble = ai[server].wobble() * 0.6f;
         }
         held = false;
-        launch(server, power, aim, 1f, wobble);
+        launch(server, power, aim, 1f, wobble, false);
         state = RALLY;
         hitter = server;
         bounces = 0;
@@ -236,16 +239,23 @@ final class Game {
      * how far the ball strays from the aim, in depth, across and in height over the
      * net, so a hard or careless shot can land in the net or out.
      */
-    private void launch(int side, float power, float aimX, float quality, float wobble) {
+    private void launch(int side, float power, float aimX, float quality, float wobble, boolean shot) {
         Ball b = ball;
         float dir = side == 0 ? 1f : -1f;
+        power = Math.min(1.2f, power + realm.strikeBoost(side, pad[side].z));
+        if (shot) {
+            // a shot: as hard and as deep as a ball can go, true across, but low and wild over the net
+            power = 1.1f;
+            quality = 1f;
+            wobble = 0f;
+        }
         float miss = 1f - quality;
         float err = 0.012f + 0.2f * miss * miss + 0.10f * wobble;
         float tz = NZ + dir * (0.35f + 0.85f * power) + (float) rnd.nextGaussian() * err;
         float tx = Math.max(-0.62f, Math.min(0.62f, aimX)) + (float) rnd.nextGaussian() * err;
         // the height of the ball's centre where it crosses the net
-        float clear = 0.035f + 0.12f * (1f - power) * (1f - power);
-        float scatter = 0.008f + 0.012f * power + 0.05f * miss + 0.08f * wobble;
+        float clear = shot ? 0.012f : 0.035f + 0.12f * Math.max(0f, 1f - power) * Math.max(0f, 1f - power);
+        float scatter = 0.008f + 0.012f * power + 0.05f * miss + 0.08f * wobble + (shot ? 0.03f : 0f);
         float yn = NH + Ball.R + clear + (float) rnd.nextGaussian() * scatter;
         // flight time that passes through that height and comes down on the target
         float s = (NZ - b.z) / (tz - b.z);
@@ -264,8 +274,13 @@ final class Game {
         lastSpeed = (float) Math.sqrt(b.vx * b.vx + b.vz * b.vz);
         shots++;
         pad[side].swing = 1f;
-        sink.cue(C_PADDLE, 0.55f + 0.45f * power, 0.92f + 0.22f * power + 0.06f * rnd.nextFloat());
-        if (side == 0 && human) sink.buzz(12);
+        sink.cue(C_PADDLE, 0.55f + 0.45f * Math.min(1f, power), 0.92f + 0.22f * Math.min(1f, power) + 0.06f * rnd.nextFloat());
+        if (shot) {
+            sink.cue(C_SHOT, 1f, 0.95f + 0.1f * rnd.nextFloat());
+            realm.onShot(this, side);
+            say("SHOT", side, 0.8f);
+        }
+        if (side == 0 && human) sink.buzz(shot ? 45 : 12);
     }
 
     private void advance(float dt) {
@@ -371,15 +386,19 @@ final class Game {
         float vq = b.y >= 0.04f && b.y <= 0.34f ? 1f : b.y < 0.04f ? 0.6f + 10f * Math.max(0f, b.y + 0.02f) : Math.max(0.4f, 1f - (b.y - 0.34f) * 2f);
         float q = Col.clamp01(0.25f + 0.75f * rq * vq);
         float power, aim, wobble = 0f;
+        boolean shot = false;
         if (r == 0 && human) {
             power = Col.clamp01((p.vz + 0.5f) / 2.4f);
             aim = 0.5f * b.x + 0.35f * p.vx + 1.2f * dx;
+            shot = shotsLeft[0] > 0 && p.vz > SHOT_SWING;
         } else {
             power = ai[r].power();
             aim = ai[r].aim(pad[1 - r].x);
             wobble = ai[r].wobble();
+            shot = shotsLeft[r] > 0 && ai[r].wantsShot(score[r], score[1 - r]);
         }
-        launch(r, power, aim, q, wobble);
+        if (shot) shotsLeft[r]--;
+        launch(r, power, aim, q, wobble, shot);
         hitter = r;
         bounces = 0;
         serving = false;

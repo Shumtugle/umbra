@@ -152,6 +152,7 @@ final class Scene {
 
     /** Keeps the ball's tail. Called once per frame. */
     void update(Game g, float dt) {
+        realm.tick(g, dt);
         if (g.state != Game.RALLY && g.state != Game.POINT || g.ball.gone) {
             if (!g.ball.gone) trN = 0;
             else if (trN > 0) {
@@ -217,6 +218,7 @@ final class Scene {
                     break;
             }
         }
+        realm.drawOver(this, f, g, t);
     }
 
     private float depthOf(float x, float y, float z) {

@@ -51,6 +51,25 @@ abstract class Realm {
         return false;
     }
 
+    /** Shots each side may fire in a match here; 0 where there are none. */
+    int shots() {
+        return 0;
+    }
+
+    /** Called when a side fires a shot. */
+    void onShot(Game g, int side) {}
+
+    /** Extra power a strike gets here from where the paddle stands. */
+    float strikeBoost(int side, float paddleZ) {
+        return 0f;
+    }
+
+    /** Time passing for the realm's own living things, once per frame. */
+    void tick(Game g, float dt) {}
+
+    /** Drawn over everything but the interface: weather, smoke. */
+    void drawOver(Scene s, Px f, Game g, float t) {}
+
     /** Marks drawn with the ball, under it: where it is going, and how. */
     void drawGuide(Scene s, Px f, Game g) {}
 

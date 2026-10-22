@@ -117,6 +117,12 @@ final class Ai {
         return (rnd.nextFloat() - 0.5f) * 1.0f;
     }
 
+    /** Whether to fire its one shot now: rarely, and more likely when the game is close and late. */
+    boolean wantsShot(int mine, int theirs) {
+        float late = Math.max(mine, theirs) >= Game.TO_WIN - 3 ? 0.25f : 0.05f;
+        return rnd.nextFloat() < late * (0.4f + 0.6f * skill);
+    }
+
     float servePower() {
         return 0.15f + 0.3f * rnd.nextFloat();
     }

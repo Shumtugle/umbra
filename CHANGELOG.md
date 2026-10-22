@@ -1,5 +1,19 @@
 # Changes
 
+## 0.5
+
+- The Black River, 1837: a winter evening by a frozen river, snow, firs, a
+  sledge and a lantern; a duel fought with paddles, where nobody falls.
+- The law is the wind: it carries the ball sideways, turning from one side to
+  the other, and every few seconds a gust crosses the table as a travelling
+  wave. Falling snow drifts and streaks with it, and the gust's front sweeps the
+  table as a band of driven snow before it reaches the ball.
+- The barrier: a paddle that comes forward to its barrier line, marked in red
+  on the table, strikes up to a quarter harder.
+- One shot each a match, shown as a small pistol by the score: a forward swipe
+  faster than any ordinary stroke fires the hardest, deepest ball there is, low
+  over the net, with a crack and a cloud of smoke that the wind carries away.
+
 ## 0.4
 
 - The Lyceum, 335 BC: the physics of the ancients, played as if it were true.

@@ -209,6 +209,19 @@ final class Px {
             }
     }
 
+    /** A soft round cloud: opaque-ish in the middle, fading to nothing at radius r. */
+    void puff(float cx, float cy, float rx, float ry, int c, float op) {
+        int x0 = (int) Math.floor(cx - rx), x1 = (int) Math.ceil(cx + rx);
+        int y0 = (int) Math.floor(cy - ry), y1 = (int) Math.ceil(cy + ry);
+        for (int y = Math.max(0, y0); y <= Math.min(h - 1, y1); y++)
+            for (int x = Math.max(0, x0); x <= Math.min(w - 1, x1); x++) {
+                float dx = (x + 0.5f - cx) / rx, dy = (y + 0.5f - cy) / ry;
+                float q = 1f - (dx * dx + dy * dy);
+                if (q <= 0f) continue;
+                blend(x, y, c, op * q * q);
+            }
+    }
+
     /** Soft light around a point: falls off smoothly to nothing at radius r. */
     void glow(float cx, float cy, float r, int c, float k) {
         int x0 = (int) Math.floor(cx - r), x1 = (int) Math.ceil(cx + r);

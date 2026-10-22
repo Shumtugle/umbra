@@ -1,0 +1,10 @@
+screen 1096 2560
+realm 4
+wait 0.8
+shot v_title
+tap 137 300
+bot on
+wait 5
+shot v_rally_a
+wait 2.2
+shot v_rally_b
