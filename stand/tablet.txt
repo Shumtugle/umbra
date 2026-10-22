@@ -1,0 +1,8 @@
+# The tablet in portrait: a shorter screen.
+screen 800 1280
+wait 1.0
+shot t_title
+tap 133 200
+bot on
+wait 5
+shot t_rally

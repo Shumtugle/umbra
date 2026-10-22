@@ -1,0 +1,18 @@
+# Wait for the ball to meet the net, then watch it; then the same for the hole.
+screen 1096 2560
+tap 137 300
+bot on
+bot noise 0.09
+bot swipe 1.6
+until net 240
+shot net_0
+wait 0.1
+shot net_1
+wait 0.25
+shot net_2
+until gone 600
+shot gone_0
+wait 0.15
+shot gone_1
+wait 0.3
+shot gone_2

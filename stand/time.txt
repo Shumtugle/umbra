@@ -1,0 +1,11 @@
+screen 1096 2560
+tap 137 300
+bot on
+wait 3
+time 1500
+screen 800 1280
+tap 133 200
+bot on
+wait 3
+time 1500
+shot tablet

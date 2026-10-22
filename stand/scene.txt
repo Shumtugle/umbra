@@ -1,0 +1,16 @@
+# The phone the game is checked on, portrait.
+screen 1096 2560
+wait 1.0
+shot 01_title
+wait 3.0
+shot 02_attract
+tap 137 300
+wait 0.3
+shot 03_serve
+bot on
+wait 6
+shot 04_rally_a
+wait 0.4
+shot 05_rally_b
+wait 0.3
+shot 06_rally_c

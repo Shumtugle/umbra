@@ -1,0 +1,13 @@
+# A player made of touches with a human hand: late, shaky, slower than a perfect finger.
+screen 1096 2560
+bot on
+bot swipe 1.4
+bot noise 0.09
+bot speed 2.6
+bot react 0.3
+level 1
+sim 900
+level 3
+sim 900
+level 6
+sim 900
