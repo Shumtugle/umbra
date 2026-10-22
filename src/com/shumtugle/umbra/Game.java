@@ -3,7 +3,7 @@ package com.shumtugle.umbra;
 import java.util.Random;
 
 /**
- * The match: two paddles, the ball, the hole, the score and the rules of the
+ * The match: two paddles, the ball, the realm, the score and the rules of the
  * rally. Plain Java; the phone only hears about it through Sink.
  *
  * World units are metres; x runs across the table, y up from the table top, z
@@ -88,7 +88,7 @@ final class Game {
     }
 
     final Sink sink;
-    final Hole hole = new Hole();
+    final Realm realm;
     final Ball ball = new Ball();
     final Paddle[] pad = {new Paddle(0), new Paddle(1)};
     final Ai[] ai;
@@ -104,18 +104,19 @@ final class Game {
     float lastSpeed;            // speed of the last strike, for the effects
     float netHitX, netHitAge = 9f, netHitPower;   // where and how long ago the net was struck
     float bounceX, bounceZ, bounceAge = 9f;       // the last bounce on the table
-    float goneAge = 9f;                          // time since the hole took the ball
+    float goneAge = 9f;                          // time since the realm took the ball
     private float lastNetCue = -1f;
     int shots, points;          // strikes and points so far, counted for the stand
-    int nets, gones;            // how many points ended in the net or in the hole
+    int nets, gones;            // how many points ended in the net or were taken by the realm
     String lastReason = "";
     int lastWinner = -1;
 
-    Game(Sink sink, long seed) {
+    Game(Sink sink, Realm realm, long seed) {
         this.sink = sink;
+        this.realm = realm;
         rnd = new Random(seed);
         ai = new Ai[]{new Ai(0, rnd), new Ai(1, rnd)};
-        hole.at(0f);
+        realm.at(0f);
     }
 
     void startMatch(boolean humanPlays, float skill) {
@@ -171,7 +172,7 @@ final class Game {
         switch (state) {
             case SERVE:
                 clock += dt;
-                hole.at(clock);
+                realm.at(clock);
                 updateServe(dt);
                 break;
             case RALLY:
@@ -187,7 +188,7 @@ final class Game {
                 break;
             default:
                 clock += dt;
-                hole.at(clock);
+                realm.at(clock);
                 break;
         }
     }
@@ -268,8 +269,8 @@ final class Game {
         int n = (int) Math.ceil(dt / STEP);
         float h = dt / n;
         for (int i = 0; i < n; i++) {
-            hole.at(clock);
-            int ev = ball.step(h, clock);
+            realm.at(clock);
+            int ev = ball.step(h, clock, realm);
             clock += h;
             if (state == RALLY) rules(ev);
             else if (ev == Ball.BOUNCE) {
@@ -277,7 +278,7 @@ final class Game {
                 sink.cue(C_TABLE, Col.clamp01(Math.abs(ball.vy) / 3.5f) * 0.5f + 0.1f, 0.85f + 0.3f * rnd.nextFloat());
             } else if (ev == Ball.NET || ev == Ball.CORD) netAt(ev);
         }
-        hole.at(clock);
+        realm.at(clock);
     }
 
     private void bounceAt() {
@@ -305,7 +306,7 @@ final class Game {
             gones++;
             sink.cue(C_GONE, 1f, 1f);
             if (human) sink.buzz(40);
-            point(1 - hitter, "SWALLOWED");
+            point(1 - hitter, realm.takenReason());
             return;
         }
         if (ev == Ball.NET || ev == Ball.CORD) {
@@ -391,7 +392,7 @@ final class Game {
         lastReason = why;
         lastWinner = winnerSide;
         state = POINT;
-        timer = why.equals("SWALLOWED") ? 1.9f : 1.5f;
+        timer = goneAge < 0.1f ? 1.9f : 1.5f;
         say(why, winnerSide, timer - 0.1f);
         boolean over = (score[0] >= TO_WIN || score[1] >= TO_WIN) && Math.abs(score[0] - score[1]) >= 2;
         if (over) winner = score[0] > score[1] ? 0 : 1;

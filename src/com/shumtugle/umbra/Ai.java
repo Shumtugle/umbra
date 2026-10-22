@@ -42,7 +42,7 @@ final class Ai {
         final float h = 1f / 240f;
         float t = g.clock;
         for (int i = 0; i < 960; i++) {
-            int ev = s.step(h, t);
+            int ev = s.step(h, t, g.realm);
             t += h;
             if (s.gone) break;
             if (ev == Ball.BOUNCE && (s.z < Game.NZ ? 0 : 1) == side) landed = true;

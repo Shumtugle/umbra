@@ -22,9 +22,9 @@ final class Sound implements Runnable {
         if (s != null) s.cue(id, vol, pitch);
     }
 
-    void hum(float level, float near) {
+    void hum(int kind, float level, float near) {
         Synth s = synth;
-        if (s != null) s.hum(level, near);
+        if (s != null) s.hum(kind, level, near);
     }
 
     void start() {

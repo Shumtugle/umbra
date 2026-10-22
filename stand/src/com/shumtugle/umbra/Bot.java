@@ -112,7 +112,7 @@ final class Bot {
         iz = -0.3f;
         hitAt = now + 0.6f;
         for (int i = 0; i < 960; i++) {
-            boolean b = s.step(1f / 240f, g.clock + t) == Ball.BOUNCE;
+            boolean b = s.step(1f / 240f, g.clock + t, g.realm) == Ball.BOUNCE;
             t += 1f / 240f;
             if (s.gone) break;
             if (b && s.z < Game.NZ) landed = true;

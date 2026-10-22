@@ -2,24 +2,20 @@ package com.shumtugle.umbra;
 
 /**
  * Draws the court. The camera never moves, so everything that never changes
- * (the sky, the table top with its lines, the table's edge) is painted once per
- * screen size, with soft edges where a pixel is only partly covered. Each frame
- * copies that, then lays the living things over it: the grid bent by the hole,
- * the light of the hole on the table, shadows, the net, the paddles, the ball
- * and the hole itself, farthest first.
+ * (the realm's backdrop, the table top with its lines, the table's edge) is
+ * painted once per screen size, with soft edges where a pixel is only partly
+ * covered. Each frame copies that, then lays the living things over it: the grid
+ * bent by the realm's force, its light on the table, shadows, the net, the
+ * paddles, the ball and the realm's own thing, farthest first.
  */
 final class Scene {
     static final float THICK = 0.035f;       // thickness of the table top
     static final float GRID = 0.25f;         // spacing of the grid on the table
-    // the hole as it is drawn, in metres at its depth
-    static final float SHADOW = 0.08f, DISK_IN = 0.105f, DISK_OUT = 0.25f, LENS = 0.40f, EINSTEIN = 0.075f;
-    static final float DISK_FLAT = 0.2f;     // how flat the disk looks: its tilt toward the camera
-    static final float DISK_TURN = -0.17f;   // its slant on the screen, radians
 
     final Cam cam;
     final int w, h;
-    private final Sky sky;
-    private final int[] still;               // the sky with the table painted in
+    final Realm realm;
+    private final int[] still;               // the backdrop with the table painted in
 
     // the table top, pixel by pixel: where it is on screen and in the world
     private int tn;
@@ -33,22 +29,28 @@ final class Scene {
     private float trClock;
     private float goneX, goneY, goneZ;
 
-    private int[] lensSrc = new int[0];
+    private int[] lensSrc = new int[0];   // see scratch()
 
-    Scene(int w, int h) {
+    Scene(int w, int h, Realm realm) {
         this.w = w;
         this.h = h;
+        this.realm = realm;
         cam = new Cam(w, h);
-        sky = new Sky(w, h);
         still = new int[w * h];
         bake();
+    }
+
+    /** A buffer for passes that read the frame while they change it. */
+    int[] scratch(int n) {
+        if (lensSrc.length < n) lensSrc = new int[n];
+        return lensSrc;
     }
 
     // ---- what never changes
 
     /** Paints the table into the still picture and lists its pixels for the living layers. */
     private void bake() {
-        sky.paint(still, 0f);
+        realm.backdrop(this, still);
         int cap = w * h;
         int[] idx = new int[cap];
         float[] xs = new float[cap], zs = new float[cap], foot = new float[cap], cov = new float[cap], free = new float[cap];
@@ -72,7 +74,7 @@ final class Scene {
                 int i = sy * w + sx;
                 if (c > 0f) {
                     float mark = lines(x, zT, footX, footZ);
-                    int surface = Col.mix(surface(x, zT), 0xFF5FD8F8, mark);
+                    int surface = Col.mix(realm.surface(x, zT), realm.lines(), mark);
                     still[i] = Col.mix(still[i], surface, c);
                     idx[n] = i;
                     xs[n] = x;
@@ -90,8 +92,8 @@ final class Scene {
                     float fc = band(fy, -THICK, 0f, fFoot) * band(fx, -Game.HW, Game.HW, faceT(sy + 0.5f) * inv) * (1f - c);
                     if (fc > 0f) {
                         float k = Col.clamp01(-fy / THICK);
-                        int face = Col.mix(0xFF2A6FA8, 0xFF081226, k);
-                        if (k < 0.25f) face = Col.mix(0xFF8FE8FF, face, k * 4f);   // a lit bevel
+                        int face = Col.mix(realm.faceTop(), realm.faceBottom(), k);
+                        if (k < 0.25f) face = Col.mix(realm.bevel(), face, k * 4f);   // a lit bevel
                         still[i] = Col.mix(still[i], face, fc);
                     }
                 }
@@ -104,7 +106,7 @@ final class Scene {
         tFoot = java.util.Arrays.copyOf(foot, n);
         tCov = java.util.Arrays.copyOf(cov, n);
         tFree = java.util.Arrays.copyOf(free, n);
-        sky.keepVisible(still);
+        realm.keepVisible(still);
     }
 
     /** Where the ray through a screen row meets the plane at height py. */
@@ -146,12 +148,6 @@ final class Scene {
         return Col.clamp01(m);
     }
 
-    /** The bare table top: deep blue, a little lighter toward the middle. */
-    private static int surface(float x, float z) {
-        float lit = (float) Math.exp(-(x * x / 1.1f + (z - 1.37f) * (z - 1.37f) / 2.6f));
-        return Col.mix(0xFF060D22, 0xFF10285A, 0.35f + 0.65f * lit);
-    }
-
     // ---- the living frame
 
     /** Keeps the ball's tail. Called once per frame. */
@@ -189,13 +185,14 @@ final class Scene {
         System.arraycopy(still, 0, f.a, 0, still.length);
         twinkle(f, t);
         table(f, g, t);
+        realm.drawOnTable(this, f, g, t);
         zone(f, g);
         // the rest by depth, farthest first
         float[] depth = new float[5];
         depth[0] = depthOf(g.pad[1].x, Game.PY, g.pad[1].z);
         depth[1] = depthOf(g.ball.x, g.ball.y, g.ball.z);
         depth[2] = depthOf(0f, Game.NH * 0.5f, Game.NZ);
-        depth[3] = depthOf(g.hole.x, Hole.Y, g.hole.z);
+        depth[3] = depthOf(realm.x, realm.height(), realm.z);
         depth[4] = depthOf(g.pad[0].x, Game.PY, g.pad[0].z);
         boolean[] done = new boolean[5];
         for (int k = 0; k < 5; k++) {
@@ -213,7 +210,7 @@ final class Scene {
                     net(f, g);
                     break;
                 case 3:
-                    hole(f, g, t);
+                    realm.drawCenter(this, f, g, t);
                     break;
                 default:
                     paddle(f, g.pad[0], g.human);
@@ -227,20 +224,27 @@ final class Scene {
     }
 
     private void twinkle(Px f, float t) {
-        sky.twinkle(f.a, t);
+        realm.twinkle(f.a, t);
     }
 
-    /** The grid bent by the hole, its light and reflection, shadows and the marks of bounces. */
+    /** The grid bent by the realm's force, its light and reflection, shadows and the marks of bounces. */
     private void table(Px f, Game g, float t) {
         final int[] a = f.a;
-        final float hx = g.hole.x, hz = g.hole.z;
+        final Realm rl = realm;
+        final float hx = rl.x, hz = rl.z, hy = rl.height();
+        final float bendA = rl.bendA(), bendC = rl.bendC(), gridGain = rl.gridGain();
+        final int gc = rl.grid(), lc = rl.light(), rc = rl.ripple();
+        final float gR = (gc >> 16) & 255, gG = (gc >> 8) & 255, gB = gc & 255;
+        final float lR = (lc >> 16) & 255, lG = (lc >> 8) & 255, lB = lc & 255;
+        final float rR = (rc >> 16) & 255, rG = (rc >> 8) & 255, rB = rc & 255;
+        final float lightK = rl.lightK(), glossK = rl.gloss();
         Ball b = g.ball;
         boolean ballShadow = g.state != Game.OVER && !b.gone;
         float bR = Ball.R * 1.3f + 0.06f * Math.max(0f, b.y), bDark = 0.55f / (1f + 2.2f * Math.max(0f, b.y));
-        // the hole's reflection on the glossy top: where the camera sees the mirrored hole
-        float s = cam.y / (cam.y + Hole.Y);
+        // the thing's reflection on the glossy top: where the camera sees it mirrored
+        float s = cam.y / (cam.y + hy);
         float rx = cam.x + (hx - cam.x) * s, rz = cam.z + (hz - cam.z) * s;
-        float flare = 1f + 0.8f * g.hole.closeness(b) * (b.gone ? 0f : 1f) + 2.5f * Math.max(0f, 1f - g.goneAge * 2f);
+        float flare = 1f + 0.8f * rl.closeness(b) * (b.gone ? 0f : 1f) + 2.5f * Math.max(0f, 1f - g.goneAge * 2f);
         float ring = g.bounceAge < 0.45f ? g.bounceAge : -1f;
         Game.Paddle p0 = g.pad[0], p1 = g.pad[1];
         float ringR = 0.03f + Math.max(0f, ring) * 0.55f, ringK = ring >= 0f ? (1f - ring / 0.45f) * 0.7f : 0f;
@@ -249,10 +253,10 @@ final class Scene {
             int i = tIdx[n];
             int c = a[i];
             float cr = (c >> 16) & 255, cg = (c >> 8) & 255, cb = c & 255;
-            // the grid, pulled toward the hole: the clearest picture of its pull
+            // the grid, bent by the force: the clearest picture of it
             float dx = hx - x, dz = hz - z;
             float r2 = dx * dx + dz * dz;
-            float k = 0.86f / (r2 + 0.9f);       // deep, wide, and never folds (0.9 > 0.86): one sheet
+            float k = bendA / (r2 + bendC);
             float gx = (x + dx * k) * (1f / GRID) + 64f, gz = (z + dz * k) * (1f / GRID) + 64f;
             float fx = gx - (int) gx, fz = gz - (int) gz;
             float lx = (fx < 0.5f ? fx : 1f - fx) * GRID, lz = (fz < 0.5f ? fz : 1f - fz) * GRID;
@@ -261,21 +265,21 @@ final class Scene {
             float grid = ga > gb ? ga : gb;
             if (grid > 0f) {
                 if (grid > 1f) grid = 1f;
-                float gk = grid * tFree[n] * (0.5f + 0.9f / (1f + r2 * 2.5f));
-                cr += 0x1D * gk;
-                cg += 0x4F * gk;
-                cb += 0x96 * gk;
+                float gk = grid * tFree[n] * (0.5f + 0.9f / (1f + r2 * 2.5f)) * gridGain;
+                cr += gR * gk;
+                cg += gG * gk;
+                cb += gB * gk;
             }
-            // warm light from the disk, and its streak of reflection toward the camera
-            float lk = 0.022f / (r2 + Hole.Y * Hole.Y) * flare;
+            // light from the thing, and its streak of reflection toward the camera
+            float lk = lightK / (r2 + hy * hy) * flare;
             float ex = (x - rx) * (1f / 0.11f), ez = (z - rz) * (1f / 0.42f);
             float e2 = ex * ex + ez * ez;
-            if (e2 < 9f) lk += (float) Math.exp(-e2) * 0.32f * flare;
+            if (e2 < 9f) lk += (float) Math.exp(-e2) * glossK * flare;
             lk *= cov;
-            cr += 255 * lk;
-            cg += 0x9A * lk;
-            cb += 0x48 * lk;
-            // a cyan ripple where the ball last struck the table
+            cr += lR * lk;
+            cg += lG * lk;
+            cb += lB * lk;
+            // a ripple where the ball last struck the table
             if (ringK > 0f) {
                 float bx = x - g.bounceX, bz = z - g.bounceZ;
                 float d2 = bx * bx + bz * bz;
@@ -283,9 +287,9 @@ final class Scene {
                     float e = Math.abs((float) Math.sqrt(d2) - ringR);
                     if (e < 0.03f) {
                         float rk = (1f - e / 0.03f) * ringK * cov;
-                        cr += 0x5F * rk;
-                        cg += 0xD8 * rk;
-                        cb += 0xF8 * rk;
+                        cr += rR * rk;
+                        cg += rG * rk;
+                        cb += rB * rk;
                     }
                 }
             }
@@ -348,9 +352,9 @@ final class Scene {
     /** A lit white sphere with a soft edge and a faint glow. */
     private void sphere(Px f, float cx, float cy, float r, float op, Game g) {
         f.glow(cx, cy, r * 2.6f, 0xFF9FE8FF, 0.20f * op);
-        // the warm side faces the hole
+        // the warm side faces the realm's thing
         float hx = 0f, hy = 0f;
-        if (cam.project(g.hole.x, Hole.Y, g.hole.z)) {
+        if (cam.project(realm.x, realm.height(), realm.z)) {
             hx = cam.sx - cx;
             hy = cam.sy - cy;
             float d = (float) Math.sqrt(hx * hx + hy * hy) + 1e-3f;
@@ -370,14 +374,14 @@ final class Scene {
                 float diff = Col.clamp01(-0.45f * u - 0.55f * v + 0.70f * nz);
                 float rim = Col.clamp01(u * hx + v * hy) * (1f - nz);
                 int c = Col.mix(0xFF5A6A88, 0xFFF6F3EC, 0.25f + 0.75f * diff);
-                c = Col.addScaled(c, 0xFFFF9A48, rim * 0.9f);
+                c = Col.addScaled(c, realm.rimLight(), rim * 0.9f);
                 float spec = Col.clamp01(1f - ((u + 0.38f) * (u + 0.38f) + (v + 0.42f) * (v + 0.42f)) * 9f);
                 c = Col.addScaled(c, 0xFFFFFFFF, spec * 0.8f);
                 f.blend(x, y, c, op * Math.min(1f, cov));
             }
     }
 
-    /** The tail of the ball: it bends where the hole pulls. */
+    /** The tail of the ball: it bends where the force bends the path. */
     private void tail(Px f) {
         float px = 0f, py = 0f;
         boolean have = false;
@@ -389,8 +393,8 @@ final class Scene {
             float sx = cam.sx, sy = cam.sy, sc = cam.scale();
             if (have) {
                 float k = 1f - i / (float) TRAIL;
-                float width = Math.max(0.8f, Ball.R * sc * 1.3f * k);
-                f.lineAA(px, py, sx, sy, width, 0xFF7FE8FF, 0.42f * k * k);
+                float width = Math.max(0.8f, Ball.R * sc * realm.tailWidth() * k);
+                f.lineAA(px, py, sx, sy, width, realm.tail(), realm.tailAlpha() * k * k);
             }
             px = sx;
             py = sy;
@@ -398,15 +402,15 @@ final class Scene {
         }
     }
 
-    /** The ball falling into the hole: stretched, shrinking, gone. */
+    /** The ball taken by the realm's thing: stretched, shrinking, gone. */
     private void swallowed(Px f, Game g) {
         float a = g.goneAge / 0.45f;
         if (a >= 1f) return;
         float e = a * a;
-        float x = goneX + (g.hole.x - goneX) * e, y = goneY + (Hole.Y - goneY) * e, z = goneZ + (g.hole.z - goneZ) * e;
+        float x = goneX + (realm.x - goneX) * e, y = goneY + (realm.height() - goneY) * e, z = goneZ + (realm.z - goneZ) * e;
         if (!cam.project(x, y, z)) return;
         float sx = cam.sx, sy = cam.sy, r = Math.max(1f, Ball.R * cam.scale() * (1f - a));
-        if (cam.project(g.hole.x, Hole.Y, g.hole.z)) f.lineAA(sx, sy, sx + (cam.sx - sx) * 0.6f, sy + (cam.sy - sy) * 0.6f, r * 1.2f, 0xFFFFE2B0, 0.6f * (1f - a));
+        if (cam.project(realm.x, realm.height(), realm.z)) f.lineAA(sx, sy, sx + (cam.sx - sx) * 0.6f, sy + (cam.sy - sy) * 0.6f, r * 1.2f, 0xFFFFE2B0, 0.6f * (1f - a));
         sphere(f, sx, sy, r, 1f - a * 0.5f, g);
     }
 
@@ -437,7 +441,7 @@ final class Scene {
         // a dark outline, then the blade: a wooden edge round a rubber face lit from the upper left
         f.ellipseAA(sx, sy, rx + 1.4f, ry + 1.4f, 0xFF120A06, 1f);
         blade(f, sx, sy, rx, ry, rub, dark, light);
-        if (!player) f.ringAA(sx, sy, rx + 0.8f, ry + 0.8f, 1f, 0xFF7FE8FF, 0.35f);
+        if (!player) f.ringAA(sx, sy, rx + 0.8f, ry + 0.8f, 1f, realm.tail(), 0.35f);
         if (p.swing > 0f) f.ringAA(sx, sy, rx + 2f + 4f * (1f - p.swing), ry + 2f + 4f * (1f - p.swing), 1.2f, 0xFFFFFFFF, 0.5f * p.swing);
     }
 
@@ -480,6 +484,7 @@ final class Scene {
         final float inv = 1f / cam.f;
         float age = g.netHitAge, hit = g.netHitX, power = g.netHitPower;
         boolean ripple = age < 1.2f;
+        int tape = realm.netTape(), threadC = realm.netThread();
         for (int sy = Math.max(0, y0); sy <= Math.min(h - 1, y1); sy++) {
             float wyA = netY(sy), wyB = netY(sy + 1), wy = netY(sy + 0.5f);
             float footY = Math.abs(wyA - wyB) + 1e-6f;
@@ -500,7 +505,7 @@ final class Scene {
                 }
                 int i = sy * w + sx;
                 if (yy > Game.NH - 0.018f) {
-                    f.a[i] = Col.mix(f.a[i], 0xFFF4F7FB, cov);
+                    f.a[i] = Col.mix(f.a[i], tape, cov);
                     continue;
                 }
                 float cell = 0.024f;
@@ -509,8 +514,8 @@ final class Scene {
                 float lwX = Math.max(0.0025f, footX * 0.45f), lwY = Math.max(0.0025f, footY * 0.45f);
                 float thread = Math.max(Col.clamp01((lwX - mx) / footX + 0.5f), Col.clamp01((lwY - my) / footY + 0.5f));
                 int c = Col.mix(f.a[i], 0xFF060A16, 0.28f * cov);
-                c = Col.mix(c, 0xFFB8C8E0, thread * 0.6f * cov);
-                if (glow > 0f) c = Col.addScaled(c, 0xFF7FE8FF, glow * cov);
+                c = Col.mix(c, threadC, thread * 0.6f * cov);
+                if (glow > 0f) c = Col.addScaled(c, realm.ripple(), glow * cov);
                 f.a[i] = c;
             }
         }
@@ -537,100 +542,8 @@ final class Scene {
         return cam.y + netT(row) * (dcy * cam.cs - cam.sn);
     }
 
-    // ---- the hole
-
-    /**
-     * The hole bends the light of everything behind it into a ring, then shows its
-     * own: the black shadow, a thin bright ring of light that orbits just outside it,
-     * and the burning disk, tilted toward the camera. The far side of the disk is
-     * seen bent over the top of the shadow, as a black hole shows it.
-     */
-    private void hole(Px f, Game g, float t) {
-        if (!cam.project(g.hole.x, Hole.Y, g.hole.z)) return;
-        float cx = cam.sx, cy = cam.sy, sc = cam.scale();
-        float lens = LENS * sc, eins = EINSTEIN * sc, rs = SHADOW * sc;
-        float din = DISK_IN * sc, dout = DISK_OUT * sc;
-        float flare = 1f + 0.7f * (g.ball.gone ? 0f : g.hole.closeness(g.ball)) + 2f * Math.max(0f, 1f - g.goneAge * 2.2f);
-        int x0 = Math.max(0, (int) (cx - lens)), x1 = Math.min(w - 1, (int) (cx + lens) + 1);
-        int y0 = Math.max(0, (int) (cy - lens)), y1 = Math.min(h - 1, (int) (cy + lens) + 1);
-        int bw = x1 - x0 + 1, bh = y1 - y0 + 1;
-        if (bw <= 1 || bh <= 1) return;
-        if (lensSrc.length < bw * bh) lensSrc = new int[bw * bh];
-        int[] src = lensSrc;
-        for (int y = 0; y < bh; y++) System.arraycopy(f.a, (y0 + y) * w + x0, src, y * bw, bw);
-        float cosT = (float) Math.cos(DISK_TURN), sinT = (float) Math.sin(DISK_TURN);
-        float spin = t * 2.2f;
-        for (int y = y0; y <= y1; y++)
-            for (int x = x0; x <= x1; x++) {
-                float vx = x + 0.5f - cx, vy = y + 0.5f - cy;
-                float r = (float) Math.sqrt(vx * vx + vy * vy);
-                if (r >= lens) continue;
-                int i = y * w + x;
-                int c = f.a[i];
-                // bent light from behind
-                if (r > 0.5f) {
-                    float k = (r - eins * eins / r) / r;
-                    int bent = sample(src, bw, bh, cx + vx * k - x0 - 0.5f, cy + vy * k - y0 - 0.5f);
-                    c = Col.mix(c, bent, Col.ramp(lens, lens * 0.62f, r));
-                }
-                // the shadow
-                float black = Col.clamp01(rs - r + 0.5f);
-                c = Col.mix(c, 0xFF000000, black);
-                // the disk in its own frame: u along it, v across, stretched back to a circle
-                float u = vx * cosT + vy * sinT, v = -vx * sinT + vy * cosT;
-                float vv = v / DISK_FLAT;
-                float dd = (float) Math.sqrt(u * u + vv * vv);
-                float behind = v < 0f ? 1f - black : 1f;
-                float e = disk(dd, din, dout, u, vv, spin) * flare;
-                if (e > 0f) c = Col.addScaled(c, heat((dd - din) / (dout - din)), e * behind);
-                // the far side of the disk, bent up over the shadow (and a thin arc below)
-                if (r > rs) {
-                    float q = (r - rs * 1.08f) / ((dout - din) * 0.32f);
-                    if (q > 0f && q < 1f) {
-                        float top = Col.clamp01(-v / r);
-                        float arc = (float) Math.sin(q * Math.PI) * (0.12f + 0.88f * top * top);
-                        c = Col.addScaled(c, heat(q * 0.7f), arc * 1.1f * flare);
-                    }
-                    float under = (r - rs * 1.02f) / (rs * 0.18f);
-                    if (under > 0f && under < 1f && v > 0f) c = Col.addScaled(c, 0xFFFFC890, (float) Math.sin(under * Math.PI) * 0.35f * (v / r) * flare);
-                    // the photon ring
-                    float pr = (r - rs * 1.04f) / 0.7f;
-                    c = Col.addScaled(c, 0xFFFFEED2, (float) Math.exp(-pr * pr) * 0.75f);
-                }
-                f.a[i] = c;
-            }
-        f.glow(cx, cy, dout * 1.7f, 0xFFFF7A30, 0.10f * flare);
-        // a flash at the horizon when it takes the ball
-        if (g.goneAge < 0.6f) {
-            float a = g.goneAge / 0.6f;
-            f.ringAA(cx, cy, rs * (1f + 2.5f * a), rs * (1f + 2.5f * a), 1.5f, 0xFFFFEED2, 0.8f * (1f - a));
-        }
-    }
-
-    /** The glow of the disk at distance dd from the centre (in the disk's own frame). */
-    private static float disk(float dd, float din, float dout, float u, float vv, float spin) {
-        if (dd <= din * 0.9f || dd >= dout) return 0f;
-        float n = (dd - din) / (dout - din);
-        float edge = Col.ramp(din * 0.9f, din * 1.02f, dd) * Col.ramp(dout, dout * 0.7f, dd);
-        float body = edge * (1.6f - 1.2f * Col.clamp01(n));
-        // the near side of the spin comes toward the camera and burns brighter
-        float doppler = 1f - 0.5f * u / (dd + 1e-3f);
-        float ang = (float) Math.atan2(vv, u);
-        // gas in fine lanes along the orbit, the lanes wavering as they turn
-        float lanes = 0.8f + 0.2f * (float) Math.sin(n * 26f + 1.6f * (float) Math.sin(ang * 2f - spin * 0.9f));
-        float clumps = 0.85f + 0.15f * (float) Math.sin(ang * 3f - spin * (1.2f / (0.3f + n)) + n * 4f);
-        return body * doppler * lanes * clumps;
-    }
-
-    /** Colour of hot gas: white at the inner edge, through gold, to deep orange outside. */
-    private static int heat(float n) {
-        n = Col.clamp01(n);
-        if (n < 0.35f) return Col.mix(0xFFFFF6E0, 0xFFFFC060, n / 0.35f);
-        return Col.mix(0xFFFFC060, 0xFFD8461E, (n - 0.35f) / 0.65f);
-    }
-
     /** A pixel read between pixels, blended from its four neighbours. */
-    private static int sample(int[] src, int bw, int bh, float fx, float fy) {
+    static int sample(int[] src, int bw, int bh, float fx, float fy) {
         int ix = (int) Math.floor(fx), iy = (int) Math.floor(fy);
         float ax = fx - ix, ay = fy - iy;
         int c00 = at(src, bw, bh, ix, iy), c10 = at(src, bw, bh, ix + 1, iy);

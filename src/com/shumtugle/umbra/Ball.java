@@ -1,7 +1,7 @@
 package com.shumtugle.umbra;
 
 /**
- * The ball and the laws it keeps: the hole's pull, gravity, the bounce on the
+ * The ball and the laws it keeps: the realm's force, gravity, the bounce on the
  * table top, and the net. The net is a real thing in the way: below its top cord
  * the mesh stops the ball dead, and the cord itself deflects whatever grazes it.
  */
@@ -31,10 +31,10 @@ final class Ball {
         return x >= -Game.HW && x <= Game.HW && z >= 0f && z <= Game.L;
     }
 
-    /** Advances by h seconds, starting at time t. */
-    int step(float h, float t) {
+    /** Advances by h seconds, starting at time t, in the given realm. */
+    int step(float h, float t, Realm realm) {
         if (gone) return NONE;
-        if (Hole.pull(this, t, h)) {
+        if (realm.act(this, t, h)) {
             gone = true;
             return GONE;
         }

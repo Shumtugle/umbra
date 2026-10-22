@@ -11,7 +11,7 @@ package com.shumtugle.umbra;
  * and each game pixel is a whole number of screen pixels.
  */
 final class World implements Game.Sink {
-    static final String VERSION = "0.1";   // shown on screen; keep in step with versionName
+    static final String VERSION = "0.2";   // shown on screen; keep in step with versionName
     static final int TARGET_W = 270;       // about this many game pixels across
 
     static final int DOWN = 0, MOVE = 1, UP = 2;
@@ -25,8 +25,8 @@ final class World implements Game.Sink {
 
         void cue(int id, float vol, float pitch);
 
-        /** The hum of the hole, 0..1, and how near the ball is to it, 0..1. */
-        void hum(float level, float near);
+        /** The realm's hum: its kind, its level 0..1, and how near the ball is to the realm's thing, 0..1. */
+        void hum(int kind, float level, float near);
 
         int pref(String key, int def);
 
@@ -43,6 +43,9 @@ final class World implements Game.Sink {
     float lift;                            // the paddle rides this far above the finger
     int screen = MENU;
     int level, won, lost;
+    final Realm[] realms = {new Hole(), new Nucleus()};
+    int realmIndex;
+    private Scene[] scenes = new Scene[realms.length];
     Scene scene;
     Game game;
     boolean touching;
@@ -53,17 +56,47 @@ final class World implements Game.Sink {
 
     World(Host host) {
         this.host = host;
-        level = Math.max(1, host.pref("level", 1));
+        realmIndex = Math.max(0, Math.min(realms.length - 1, host.pref("realm", 0)));
+        level = levelOf(realmIndex);
         won = host.pref("won", 0);
         lost = host.pref("lost", 0);
+    }
+
+    Realm realm() {
+        return realms[realmIndex];
+    }
+
+    /** Each realm keeps its own level: the first realm's levels carry over from before realms. */
+    private int levelOf(int i) {
+        return Math.max(1, host.pref(i == 0 ? "level" : "level" + i, 1));
+    }
+
+    private void saveLevel() {
+        host.setPref(realmIndex == 0 ? "level" : "level" + realmIndex, level);
     }
 
     void resize(int width, int height) {
         w = width;
         h = height;
         lift = 0.13f * w;
-        scene = new Scene(w, h);
+        scenes = new Scene[realms.length];
+        scene = sceneOf(realmIndex);
         if (game == null) attract();
+    }
+
+    /** The scene of a realm, painted the first time it is needed. */
+    private Scene sceneOf(int i) {
+        if (scenes[i] == null) scenes[i] = new Scene(w, h, realms[i]);
+        return scenes[i];
+    }
+
+    /** Switches to another realm, on the title screen. */
+    void pick(int i) {
+        realmIndex = (i + realms.length) % realms.length;
+        host.setPref("realm", realmIndex);
+        level = levelOf(realmIndex);
+        scene = sceneOf(realmIndex);
+        attract();
     }
 
     // ---- sound and haptics, as the game asks for them
@@ -81,7 +114,8 @@ final class World implements Game.Sink {
     // ---- flow
 
     private void attract() {
-        game = new Game(this, seed++);
+        realm().setLevel(level);
+        game = new Game(this, realm(), seed++);
         game.startMatch(false, 0.62f);
         screen = MENU;
     }
@@ -92,7 +126,8 @@ final class World implements Game.Sink {
     }
 
     private void begin() {
-        game = new Game(this, seed++ * 7919L);
+        realm().setLevel(level);
+        game = new Game(this, realm(), seed++ * 7919L);
         screen = PLAY;
         game.startMatch(true, skill(level));
         host.cue(Game.C_START, 0.8f, 1f);
@@ -111,7 +146,11 @@ final class World implements Game.Sink {
                 touching = true;
             } else if (type == UP) {
                 touching = false;
-                if (Math.abs(x - downX) < 0.1f * w && Math.abs(y - downY) < 0.1f * w) begin();
+                float dx = x - downX;
+                if (Math.abs(dx) > 0.12f * w && Math.abs(dx) > Math.abs(y - downY)) {
+                    host.cue(Game.C_TICK, 0.5f, 1f);
+                    pick(realmIndex + (dx < 0f ? 1 : -1));
+                } else if (Math.abs(dx) < 0.1f * w && Math.abs(y - downY) < 0.1f * w) begin();
             }
             return;
         }
@@ -138,8 +177,8 @@ final class World implements Game.Sink {
         clock += dt;
         game.update(dt);
         scene.update(game, dt);
-        float near = game.ball.gone || game.state == Game.SERVE ? 0f : game.hole.closeness(game.ball);
-        host.hum(screen == MENU ? 0.35f : 1f, near * near);
+        float near = game.ball.gone || game.state == Game.SERVE ? 0f : game.realm.closeness(game.ball);
+        host.hum(game.realm.hum(), screen == MENU ? 0.35f : 1f, near * near);
         if (screen == MENU && game.state == Game.OVER) {
             game.startMatch(false, 0.62f);
         } else if (screen == PLAY && game.state == Game.OVER) {
@@ -153,7 +192,7 @@ final class World implements Game.Sink {
                 lost++;
                 level = Math.max(1, level - 1);
             }
-            host.setPref("level", level);
+            saveLevel();
             host.setPref("won", won);
             host.setPref("lost", lost);
         } else if (screen == RESULT) {
@@ -204,9 +243,22 @@ final class World implements Game.Sink {
         int[] rows = new int[7];
         for (int r = 0; r < 7; r++) rows[r] = Col.mix(0xFFF6F8FF, 0xFFFFB45A, r / 6f);
         PixelFont.draw(f, "UMBRA", tx, ty, big, 0, rows);
-        center(f, "TABLE TENNIS BY A BLACK HOLE", ty + 7 * big + 14, 1, 0xFFA8BCE0);
-        int py = (int) (h * 0.80f);
-        shade(f, py - 14, py + 44, 0.45f);
+        center(f, "TABLE TENNIS WHERE PHYSICS BENDS", ty + 7 * big + 14, 1, 0xFFA8BCE0);
+        // the realm, chosen with a sideways swipe
+        int ry = (int) (h * 0.63f);
+        shade(f, ry - 16, ry + 50, 0.4f);
+        Realm r = realm();
+        center(f, r.name(), ry, 2, 0xFFFFC857);
+        center(f, r.note(), ry + 22, 1, 0xFFA8BCE0);
+        int ay = ry + 6;
+        for (int i = 0; i < 6; i++) {
+            f.rect(12 + i, ay - 6 + i, 13 + i, ay + 7 - i, 0xFFA8BCE0);
+            f.rect(w - 18 + (5 - i), ay - 6 + i, w - 17 + (5 - i), ay + 7 - i, 0xFFA8BCE0);
+        }
+        int n = realms.length, dx0 = (w - n * 9) / 2;
+        for (int i = 0; i < n; i++) f.discAA(dx0 + i * 9 + 2.5f, ry + 39, 2.4f, i == realmIndex ? 0xFFFFC857 : 0xFF56607C, 1f);
+        int py = (int) (h * 0.82f);
+        shade(f, py - 14, py + 40, 0.45f);
         if (((int) (clock * 1.6f)) % 2 == 0) center(f, "TOUCH TO PLAY", py, 2, 0xFFF2F6FA);
         center(f, "LEVEL " + level + "   WON " + won + "   LOST " + lost, py + 24, 1, 0xFFA8BCE0);
     }
@@ -248,7 +300,7 @@ final class World implements Game.Sink {
             center(f, "PUT THE RING UNDER THE BALL", y, 1, 0xFFF2F6FA);
             center(f, "SWIPE FORWARD TO HIT HARD", y + 12, 1, 0xFFF2F6FA);
         } else if (won + lost == 0 && g.score[0] + g.score[1] < 3 && g.state == Game.POINT) {
-            center(f, "THE HOLE PULLS THE BALL", y + 6, 1, 0xFFFFC890);
+            center(f, game.realm.hint(), y + 6, 1, 0xFFFFC890);
         }
     }
 

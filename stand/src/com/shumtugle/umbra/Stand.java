@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
  *   level N                 set the opponent level before a match
  *   sim 600                 run this many seconds without drawing, then print the tally
  *   time 300                draw this many frames and print the cost of one
+ *   realm N                 switch to realm N, as a swipe on the title would
  *   until net|gone 60       play on until the ball strikes the net (or falls into the hole), at most this long
  *   # comment
  */
@@ -78,7 +79,7 @@ public final class Stand implements World.Host {
     }
 
     @Override
-    public void hum(float level, float near) {
+    public void hum(int kind, float level, float near) {
     }
 
     @Override
@@ -205,6 +206,8 @@ public final class Stand implements World.Host {
             start();
         } else if (c.equals("wait")) {
             run(f(p[1]));
+        } else if (c.equals("realm")) {
+            world.pick(Integer.parseInt(p[1]));
         } else if (c.equals("time")) {
             int n = Integer.parseInt(p[1]);
             long t0 = System.nanoTime();
@@ -260,6 +263,7 @@ public final class Stand implements World.Host {
             else if (p[1].equals("react")) bot.react = f(p[2]);
         } else if (c.equals("level")) {
             world.level = Integer.parseInt(p[1]);
+            world.realm().setLevel(world.level);
         } else {
             throw new IllegalArgumentException("unknown command: " + c);
         }

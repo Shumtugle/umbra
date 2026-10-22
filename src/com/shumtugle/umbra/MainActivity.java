@@ -84,8 +84,8 @@ public final class MainActivity extends Activity implements World.Host {
     }
 
     @Override
-    public void hum(float level, float near) {
-        sound.hum(level, near);
+    public void hum(int kind, float level, float near) {
+        sound.hum(kind, level, near);
     }
 
     @Override

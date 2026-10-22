@@ -11,9 +11,14 @@ final class Px {
     boolean wrap; // horizontal wrap-around for seamless background strips
 
     Px(int w, int h) {
+        this(w, h, new int[w * h]);
+    }
+
+    /** A canvas over pixels that already exist. */
+    Px(int w, int h, int[] pixels) {
         this.w = w;
         this.h = h;
-        this.a = new int[w * h];
+        this.a = pixels;
     }
 
     void set(int x, int y, int c) {

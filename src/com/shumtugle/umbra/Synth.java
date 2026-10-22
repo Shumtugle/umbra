@@ -3,11 +3,13 @@ package com.shumtugle.umbra;
 /**
  * Every sound in the game, made from numbers; nothing is recorded. Short cues are
  * synthesized once into a bank when the game starts and played back at any pitch;
- * the hum of the hole is made live, so it can follow the ball. A small room of
+ * the hum of the realm is made live, so it can follow the ball. A small room of
  * echoes gives the knocks a place to sound in. Plain Java: the phone feeds the
  * output to its speaker, the stand writes it to a file.
  */
 final class Synth {
+    static final int HUM_DRONE = 0, HUM_MAINS = 1;
+
     final int rate;
     private final float[][] bank = new float[12][];
 
@@ -21,6 +23,8 @@ final class Synth {
 
     // the hum: targets set from the game, values eased toward them per sample
     private volatile float humLevelT, humNearT;
+    private volatile int humKind;
+    private float crackle, crackleLp;
     private float humLevel, humNear, ph1, ph2, ph3, svfLow, svfBand;
     private int seed = 0x2545F491;
 
@@ -237,8 +241,12 @@ final class Synth {
         }
     }
 
-    /** Sets the hum: its overall level and how near the ball is to the hole, both 0..1. */
-    void hum(float level, float near) {
+    /**
+     * Sets the hum: its kind (a deep drone, or the buzz of mains with sparks), its
+     * overall level and how near the ball is to the realm's thing, both 0..1.
+     */
+    void hum(int kind, float level, float near) {
+        humKind = kind;
         humLevelT = level;
         humNearT = near;
     }
@@ -268,6 +276,7 @@ final class Synth {
             qCount = 0;
         }
         float lt = humLevelT, nt = humNearT;
+        boolean mains = humKind == HUM_MAINS;
         float ease = 1f - (float) Math.exp(-1.0 / (0.06 * rate));
         float twoPi = 6.2831853f / rate;
         for (int s = 0; s < n; s++) {
@@ -288,21 +297,32 @@ final class Synth {
             // the hum: a low drone that rises and thickens as the ball comes near, and a thin whine
             humLevel += (lt - humLevel) * ease;
             humNear += (nt - humNear) * ease;
-            float f0 = 41f * (1f + 0.4f * humNear);
+            float f0 = mains ? 25f : 41f * (1f + 0.4f * humNear);
             ph1 += f0 * twoPi;
             ph2 += f0 * 2.003f * twoPi;
             ph3 += f0 * 1.498f * twoPi;
             if (ph1 > 6.2831853f) ph1 -= 6.2831853f;
             if (ph2 > 6.2831853f) ph2 -= 6.2831853f;
             if (ph3 > 6.2831853f) ph3 -= 6.2831853f;
-            float drone = (float) (Math.sin(ph1) + 0.45 * Math.sin(ph2) + 0.25 * humNear * Math.sin(ph3));
-            float fc = (500f + 1500f * humNear) / rate;
-            float fq = 2f * (float) Math.sin(Math.PI * fc);
-            float nz = noise();
-            svfLow += fq * svfBand;
-            float high = nz - svfLow - 0.08f * svfBand;
-            svfBand += fq * high;
-            float hum = humLevel * (drone * (0.05f + 0.30f * humNear) + svfBand * 0.12f * humNear * humNear);
+            float hum;
+            if (mains) {
+                // the buzz of a laboratory: a transformer's hum, and sparks as the ball comes near
+                float buzz = (float) (Math.sin(ph1 * 2.0) * 0.35 + Math.sin(ph1 * 4.0) * 0.5 + Math.sin(ph1 * 6.0) * 0.2 + Math.sin(ph1 * 8.0) * 0.12);
+                float nz = noise();
+                if (nz > 1f - 0.006f * humNear * humNear) crackle = 0.4f + 0.6f * Math.abs(noise());
+                crackle *= 0.9985f - 0.002f;
+                crackleLp += (noise() * crackle - crackleLp) * 0.6f;
+                hum = humLevel * (buzz * (0.035f + 0.08f * humNear) + crackleLp * 0.9f);
+            } else {
+                float drone = (float) (Math.sin(ph1) + 0.45 * Math.sin(ph2) + 0.25 * humNear * Math.sin(ph3));
+                float fc = (500f + 1500f * humNear) / rate;
+                float fq = 2f * (float) Math.sin(Math.PI * fc);
+                float nz = noise();
+                svfLow += fq * svfBand;
+                float high = nz - svfLow - 0.08f * svfBand;
+                svfBand += fq * high;
+                hum = humLevel * (drone * (0.05f + 0.30f * humNear) + svfBand * 0.12f * humNear * humNear);
+            }
             float wet = room(dry);
             float mix = dry * 1.35f + wet * 0.2f + hum;
             mix = mix * (27f + mix * mix) / (27f + 9f * mix * mix);     // soft limit
