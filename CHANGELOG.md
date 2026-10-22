@@ -1,5 +1,18 @@
 # Changes
 
+## 0.7
+
+- The cloud chamber, 1932: vapour, a lamp from the side, black velvet, and two
+  coils that fill the middle with a magnetic field. Every struck ball carries
+  a charge, red or blue, written beside it; in the field red turns one way and
+  blue the other. The field shows as dots on the table, densest where it is
+  strongest; the ball leaves a trail of mist that shows its curve; stray
+  particles spiral across the table by the same law. Vapour hiss and a counter
+  clicking.
+- Bigger everything a finger or an eye has to find: the ball is drawn half
+  again as large, the story button fits a thumb, and the score, names and
+  hints are twice the size.
+
 ## 0.6
 
 - Each realm is named at the top of the screen, with the number of the round

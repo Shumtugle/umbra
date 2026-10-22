@@ -18,6 +18,7 @@ final class Ball {
     boolean gone;
     // for realms where a struck ball carries a push of its own: how long it lasts, and where it ends
     float impetus, impetus0, aimX, aimY, aimZ;
+    float charge;               // for realms with fields: +1, -1, or 0
 
     void set(Ball o) {
         x = o.x;
@@ -32,6 +33,7 @@ final class Ball {
         aimX = o.aimX;
         aimY = o.aimY;
         aimZ = o.aimZ;
+        charge = o.charge;
     }
 
     static boolean onTable(float x, float z) {

@@ -160,6 +160,15 @@ abstract class Realm {
         return player ? Racket.PLAYER : Racket.OPPONENT;
     }
 
+    /** The ball's glow: what colour, and how strong. */
+    int ballGlow(Ball b) {
+        return 0xFF9FE8FF;
+    }
+
+    float ballGlowK(Ball b) {
+        return 0.2f;
+    }
+
     /** The warm side of the ball faces the thing in this colour. */
     abstract int rimLight();
 

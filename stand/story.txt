@@ -7,7 +7,7 @@ cabinet river 11 2 5
 cabinet station 11 8
 wait 0.5
 shot c_title
-tap 137 628
+tap 137 620
 wait 0.3
 shot c_cabinet
 tap 137 20
@@ -16,7 +16,7 @@ tap 137 300
 bot on
 wait 20
 shot c_play
-tap 260 14
+tap 253 21
 wait 0.5
 close
 bot off

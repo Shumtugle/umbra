@@ -1,0 +1,12 @@
+screen 1096 2560
+realm 5
+wait 0.8
+shot ch_title
+tap 137 300
+bot on
+wait 6
+shot ch_rally_a
+wait 0.3
+shot ch_rally_b
+wait 0.3
+shot ch_rally_c

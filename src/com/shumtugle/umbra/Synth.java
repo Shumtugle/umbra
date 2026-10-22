@@ -8,7 +8,7 @@ package com.shumtugle.umbra;
  * output to its speaker, the stand writes it to a file.
  */
 final class Synth {
-    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3, HUM_BLIZZARD = 4;
+    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3, HUM_BLIZZARD = 4, HUM_CHAMBER = 5;
 
     final int rate;
     private final float[][] bank = new float[13][];
@@ -295,7 +295,7 @@ final class Synth {
         }
         float lt = humLevelT, nt = humNearT;
         boolean mains = humKind == HUM_MAINS, station = humKind == HUM_STATION, cicadas = humKind == HUM_CICADAS,
-                blizzard = humKind == HUM_BLIZZARD;
+                blizzard = humKind == HUM_BLIZZARD, chamber = humKind == HUM_CHAMBER;
         float cicF = 2f * (float) Math.sin(Math.PI * 5600.0 / rate);
         float ease = 1f - (float) Math.exp(-1.0 / (0.06 * rate));
         float twoPi = 6.2831853f / rate;
@@ -317,7 +317,7 @@ final class Synth {
             // the hum: a low drone that rises and thickens as the ball comes near, and a thin whine
             humLevel += (lt - humLevel) * ease;
             humNear += (nt - humNear) * ease;
-            float f0 = mains ? 25f : station ? 33f : 41f * (1f + 0.4f * humNear);
+            float f0 = mains || chamber ? 25f : station ? 33f : 41f * (1f + 0.4f * humNear);
             ph1 += f0 * twoPi;
             ph2 += f0 * 2.003f * twoPi;
             ph3 += f0 * 1.498f * twoPi;
@@ -325,7 +325,16 @@ final class Synth {
             if (ph2 > 6.2831853f) ph2 -= 6.2831853f;
             if (ph3 > 6.2831853f) ph3 -= 6.2831853f;
             float hum;
-            if (blizzard) {
+            if (chamber) {
+                // the chamber: the hiss of vapour, the coils' low hum, and a counter clicking at stray particles
+                float nz = noise();
+                float hiss = nz - wind;
+                wind = nz;
+                float coil = (float) (Math.sin(ph1 * 4.0) * 0.5 + Math.sin(ph1 * 8.0) * 0.2);
+                if (noise() > 1f - 0.00012f - 0.0006f * humNear) crackle = 0.9f;
+                crackle *= 0.985f;
+                hum = humLevel * (hiss * 0.012f + coil * (0.02f + 0.05f * humNear) + crackle * (noise() > 0f ? 0.5f : -0.5f));
+            } else if (blizzard) {
                 // the wind: noise through a resonance that rises and howls with the gusts
                 float nz = noise();
                 float fc = (220f + 700f * humNear + 80f * (float) Math.sin(ph3 * 0.5f)) / rate;

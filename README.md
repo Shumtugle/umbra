@@ -20,6 +20,9 @@ is computed pixel by pixel on the processor, and the sounds are synthesized.
 - **The Black River, 1837.** A winter evening and a duel with paddles. The wind
   carries the ball, and the snow shows the wind; come forward to your barrier
   to strike harder; one shot each a match, with a crack and gunsmoke.
+- **The cloud chamber, 1932.** Every ball carries a charge, red or blue; in the
+  magnetic field between the coils red turns one way and blue the other, and
+  the ball's trail of mist shows the curve.
 - **The hole.** A black hole drifts over the net. It pulls the ball, harder the
   closer it passes, and keeps whatever crosses its horizon. The grid on the
   table falls toward it like a funnel; it hums louder as the ball comes near.

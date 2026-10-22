@@ -279,6 +279,7 @@ final class Game {
         }
         time = Math.max(0.24f, Math.min(1.1f, time));
         b.impetus = 0f;
+        b.charge = 0f;
         if (!realm.launch(b, side, tx, tz, yn, power)) {
             b.vx = (tx - b.x) / time;
             b.vz = (tz - b.z) / time;

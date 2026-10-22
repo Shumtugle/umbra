@@ -11,6 +11,7 @@ package com.shumtugle.umbra;
 final class Scene {
     static final float THICK = 0.035f;       // thickness of the table top
     static final float GRID = 0.25f;         // spacing of the grid on the table
+    static final float LOOK = 1.5f;          // the ball is drawn this much larger than it is, to be seen at a glance
 
     final Cam cam;
     final int w, h;
@@ -242,7 +243,7 @@ final class Scene {
         final float lightK = rl.lightK(), glossK = rl.gloss();
         Ball b = g.ball;
         boolean ballShadow = g.state != Game.OVER && !b.gone;
-        float bR = Ball.R * 1.3f + 0.06f * Math.max(0f, b.y), bDark = 0.55f / (1f + 2.2f * Math.max(0f, b.y));
+        float bR = Ball.R * LOOK * 1.25f + 0.06f * Math.max(0f, b.y), bDark = 0.55f / (1f + 2.2f * Math.max(0f, b.y));
         // the thing's reflection on the glossy top: where the camera sees it mirrored
         float s = cam.y / (cam.y + hy);
         float rx = cam.x + (hx - cam.x) * s, rz = cam.z + (hz - cam.z) * s;
@@ -357,13 +358,13 @@ final class Scene {
             return;
         }
         if (!cam.project(b.x, b.y, b.z)) return;
-        float cx = cam.sx, cy = cam.sy, r = Math.max(2.2f, Ball.R * cam.scale());
+        float cx = cam.sx, cy = cam.sy, r = Math.max(3.2f, Ball.R * LOOK * cam.scale());
         sphere(f, cx, cy, r, 1f, g);
     }
 
     /** A lit white sphere with a soft edge and a faint glow. */
     private void sphere(Px f, float cx, float cy, float r, float op, Game g) {
-        f.glow(cx, cy, r * 2.6f, 0xFF9FE8FF, 0.20f * op);
+        f.glow(cx, cy, r * 2.6f, realm.ballGlow(g.ball), realm.ballGlowK(g.ball) * op);
         // the warm side faces the realm's thing
         float hx = 0f, hy = 0f;
         if (cam.project(realm.x, realm.height(), realm.z)) {
@@ -421,7 +422,7 @@ final class Scene {
         float e = a * a;
         float x = goneX + (realm.x - goneX) * e, y = goneY + (realm.height() - goneY) * e, z = goneZ + (realm.z - goneZ) * e;
         if (!cam.project(x, y, z)) return;
-        float sx = cam.sx, sy = cam.sy, r = Math.max(1f, Ball.R * cam.scale() * (1f - a));
+        float sx = cam.sx, sy = cam.sy, r = Math.max(1f, Ball.R * LOOK * cam.scale() * (1f - a));
         if (cam.project(realm.x, realm.height(), realm.z)) f.lineAA(sx, sy, sx + (cam.sx - sx) * 0.6f, sy + (cam.sy - sy) * 0.6f, r * 1.2f, 0xFFFFE2B0, 0.6f * (1f - a));
         sphere(f, sx, sy, r, 1f - a * 0.5f, g);
     }
