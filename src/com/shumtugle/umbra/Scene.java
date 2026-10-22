@@ -252,7 +252,7 @@ final class Scene {
             // the grid, pulled toward the hole: the clearest picture of its pull
             float dx = hx - x, dz = hz - z;
             float r2 = dx * dx + dz * dz;
-            float k = 0.5f / (r2 + 0.62f);       // never folds: the bent grid stays one sheet
+            float k = 0.86f / (r2 + 0.9f);       // deep, wide, and never folds (0.9 > 0.86): one sheet
             float gx = (x + dx * k) * (1f / GRID) + 64f, gz = (z + dz * k) * (1f / GRID) + 64f;
             float fx = gx - (int) gx, fz = gz - (int) gz;
             float lx = (fx < 0.5f ? fx : 1f - fx) * GRID, lz = (fz < 0.5f ? fz : 1f - fz) * GRID;
@@ -261,7 +261,7 @@ final class Scene {
             float grid = ga > gb ? ga : gb;
             if (grid > 0f) {
                 if (grid > 1f) grid = 1f;
-                float gk = grid * tFree[n] * (0.55f + 0.6f / (1f + r2 * 2.5f));
+                float gk = grid * tFree[n] * (0.5f + 0.9f / (1f + r2 * 2.5f));
                 cr += 0x1D * gk;
                 cg += 0x4F * gk;
                 cb += 0x96 * gk;
