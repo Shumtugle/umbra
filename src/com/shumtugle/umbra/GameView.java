@@ -29,7 +29,7 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
     private final float[] evX = new float[64], evY = new float[64];
     private final int[] evType = new int[64];
     private int evCount;
-    private boolean backPending;
+    private boolean backPending, storyDone;
 
     GameView(MainActivity act) {
         super(act);
@@ -60,6 +60,13 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
     void backPressed() {
         synchronized (this) {
             backPending = true;
+        }
+    }
+
+    /** The story over the game was closed; the world hears of it on its own thread. */
+    void storyClosed() {
+        synchronized (this) {
+            storyDone = true;
         }
     }
 
@@ -148,13 +155,16 @@ final class GameView extends SurfaceView implements SurfaceHolder.Callback, Runn
     }
 
     private void processEvents() {
-        boolean back;
+        boolean back, done;
         synchronized (this) {
             for (int i = 0; i < evCount; i++) world.touch(evType[i], evX[i], evY[i]);
             evCount = 0;
             back = backPending;
             backPending = false;
+            done = storyDone;
+            storyDone = false;
         }
+        if (done) world.storyClosed();
         if (back) world.back();
     }
 

@@ -1,5 +1,21 @@
 # Changes
 
+## 0.6
+
+- Each realm is named at the top of the screen, with the number of the round
+  under it; the strength of the opponent still follows the results, unseen.
+- A question mark in the top right corner opens the realm's story: what the
+  experiment was, its history, its idea and its people. The stories are being
+  written; a short one stands in for each until then.
+- The cabinet of curiosities: every match won leaves an exhibit of its realm
+  under a glass dome, with the score on its plate. Won with the opponent on
+  three points or fewer, it stands on gold; won from five points down, it wears
+  a red ribbon. The last exhibits stand on a shelf on the title screen; touch
+  the shelf to open the whole cabinet.
+- A match left half played waits on the title screen and goes on from the same
+  score, even after the game is closed.
+- The law of the realm is named at the start of every match.
+
 ## 0.5
 
 - The Black River, 1837: a winter evening by a frozen river, snow, firs, a

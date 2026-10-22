@@ -37,6 +37,13 @@ realm, in a shuffled order. With every level the opponent is quicker and
 steadier, and each realm's force is stronger: the bend in the grid shows how
 much.
 
+## The cabinet
+
+Every match won leaves an exhibit of its realm in a cabinet of curiosities: a
+black hole in a glass sphere, a model station, an atom, an amphora, a pistol on
+velvet, each with its score on a plate. Gold for a match won easily, a red
+ribbon for a comeback.
+
 ## Playing
 
 - Slide a finger to move your paddle. It rides a little above the finger, so
@@ -45,6 +52,7 @@ much.
   hit hard: a hard ball is fast but crosses the net low.
 - Lift the finger to serve.
 - Where a realm gives you a shot, a very fast forward swipe fires it.
+- The question mark in the corner tells the story of the realm.
 - The net is real: the mesh stops the ball, the cord deflects it. A serve that
   touches the net and still lands right is played again.
 

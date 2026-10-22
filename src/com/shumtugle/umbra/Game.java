@@ -108,6 +108,7 @@ final class Game {
     float goneAge = 9f;                          // time since the realm took the ball
     private float lastNetCue = -1f;
     int shots, points;          // strikes and points so far, counted for the stand
+    int worstBehind;            // the most points the player has trailed by in this match
     final int[] shotsLeft = new int[2];   // shots each side may still fire this match, where the realm allows
     int nets, gones;            // how many points ended in the net or were taken by the realm
     String lastReason = "";
@@ -126,10 +127,22 @@ final class Game {
         ai[0].skill = ai[1].skill = skill;
         score[0] = score[1] = 0;
         shotsLeft[0] = shotsLeft[1] = realm.shots();
+        worstBehind = 0;
         winner = -1;
         firstServer = rnd.nextInt(2);
         pad[0].place(0f, -0.25f);
         pad[1].place(0f, L + 0.25f);
+        nextServe();
+    }
+
+    /** Picks up a match left unfinished: its score, who served first, the shots left. */
+    void resume(int mine, int theirs, int first, int shot0, int shot1, int behind) {
+        score[0] = mine;
+        score[1] = theirs;
+        firstServer = first & 1;
+        shotsLeft[0] = Math.max(0, Math.min(shot0, realm.shots()));
+        shotsLeft[1] = Math.max(0, Math.min(shot1, realm.shots()));
+        worstBehind = behind;
         nextServe();
     }
 
@@ -411,6 +424,7 @@ final class Game {
     private void point(int winnerSide, String why) {
         score[winnerSide]++;
         points++;
+        worstBehind = Math.max(worstBehind, score[1] - score[0]);
         lastReason = why;
         lastWinner = winnerSide;
         state = POINT;

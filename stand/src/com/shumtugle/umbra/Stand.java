@@ -28,7 +28,10 @@ import javax.imageio.ImageIO;
  *   sim 600                 run this many seconds without drawing, then print the tally
  *   time 300                draw this many frames and print the cost of one
  *   realm N                 switch to realm N, as a swipe on the title would
- *   until net|gone 60       play on until the ball strikes the net (or falls into the hole), at most this long
+ *   until net|gone|result 60  play on until the ball strikes the net, falls into the hole, or a match is won
+ *   close                   close the story page, as the phone's close mark would
+ *   restart                 a new world on the same saved settings, as when the game is opened again
+ *   cabinet hole 11 3       put an exhibit in the cabinet, as if that match had been won
  *   # comment
  */
 public final class Stand implements World.Host {
@@ -43,8 +46,10 @@ public final class Stand implements World.Host {
     private int frames, shots, buzzes;
     private final Map<Integer, Integer> cues = new TreeMap<Integer, Integer>();
     private final Map<String, Integer> prefs = new HashMap<String, Integer>();
+    private final Map<String, String> texts = new HashMap<String, String>();
     private long lastSeenPoints;
     private Game lastGame;
+    private boolean storyOpen;
 
     // tally of simulated play
     private int pointsYou, pointsCpu, matchesYou, matchesCpu, rallies, longest, shotsInRally;
@@ -91,6 +96,23 @@ public final class Stand implements World.Host {
     @Override
     public void setPref(String key, int value) {
         prefs.put(key, value);
+    }
+
+    @Override
+    public String prefText(String key) {
+        String v = texts.get(key);
+        return v == null ? "" : v;
+    }
+
+    @Override
+    public void setPrefText(String key, String value) {
+        texts.put(key, value);
+    }
+
+    @Override
+    public void story(String key, String title, String note) {
+        System.out.println(String.format("%7.2fs  story opened: %s", time, key));
+        storyOpen = true;
     }
 
     private void start() {
@@ -206,6 +228,18 @@ public final class Stand implements World.Host {
             start();
         } else if (c.equals("wait")) {
             run(f(p[1]));
+        } else if (c.equals("close")) {
+            if (storyOpen) world.storyClosed();
+            storyOpen = false;
+            step();
+        } else if (c.equals("restart")) {
+            world = new World(this);
+            world.resize(frame.w, frame.h);
+            bot = null;
+            step();
+        } else if (c.equals("cabinet")) {
+            world.cabinet.add(p[1], Integer.parseInt(p[2]), Integer.parseInt(p[3]), p.length > 4 ? Integer.parseInt(p[4]) : 0);
+            setPrefText("cabinet", world.cabinet.save());
         } else if (c.equals("realm")) {
             world.pick(Integer.parseInt(p[1]));
         } else if (c.equals("time")) {
@@ -219,7 +253,8 @@ public final class Stand implements World.Host {
             for (int i = 0; i < n; i++) {
                 step();
                 Game g = world.game;
-                if (p[1].equals("net") ? g.netHitAge < 0.02f && g.state == Game.RALLY : g.goneAge < 0.02f) break;
+                if (p[1].equals("result") ? world.screen == World.RESULT && world.youWon
+                        : p[1].equals("net") ? g.netHitAge < 0.02f && g.state == Game.RALLY : g.goneAge < 0.02f) break;
             }
         } else if (c.equals("sim")) {
             sim(f(p[1]));

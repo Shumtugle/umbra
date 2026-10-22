@@ -1,0 +1,14 @@
+screen 1096 2560
+tap 137 300
+bot on
+bot swipe 1.4
+bot noise 0.04
+until result 900
+wait 0.8
+shot w_result
+bot off
+tap 137 300
+wait 0.3
+tap 137 628
+wait 0.3
+shot w_cabinet
