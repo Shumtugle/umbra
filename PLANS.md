@@ -29,12 +29,12 @@ Each story is an essay of the same five parts:
 | `nucleus` | The nucleus, 1911 | alpha particles fired at thin gold foil, a few thrown straight back | Geiger, Marsden, Rutherford, Thomson, Bohr | the atom is almost empty; surprise as the engine of discovery |
 | `lyceum` | The Lyceum, 335 BC | the thrown stone in the books on nature: violent motion, natural place; later, the theory of impetus | Aristotle, Philoponus, Buridan; Eudoxus and Ptolemy for the cosmos in the mosaic | why a wrong theory lasts two thousand years; common sense as a theory |
 | `river` | The Black River, 1837 | a winter duel by a frozen river; the wind as a force on a flying body | the poet and his opponent, the seconds; Beaufort for the wind | honour, chance and fate; what a rule is when it is a ritual |
+| `chamber` | The cloud chamber, 1932 | tracks of charged particles in supersaturated vapour, curled by a magnet; a track that curled the wrong way | Wilson, Anderson, Blackett | seeing the invisible by what it leaves behind; antimatter found by its curl |
 
 ### Realms to come, and their stories
 
 | realm | the experiment | the people | the idea |
 |---|---|---|---|
-| Cloud chamber | tracks of charged particles in supersaturated vapour, curled by a magnet | Wilson, Anderson | seeing the invisible by what it leaves behind |
 | Double slit | one particle at a time through two slits, and the fringes it builds | Young, Davisson, Germer, Feynman; Deutsch for shadow photons | interference, the observer, the many worlds |
 | Wormhole | a bridge through spacetime | Einstein, Rosen, Wheeler, Morris, Thorne | shortcuts and causality |
 | Collider | beams bent by magnets and brought into collision | Lawrence; the builders of the great rings; Feynman for the diagrams | finding the small with the very large |
@@ -51,10 +51,32 @@ Each story is an essay of the same five parts:
 
 ## The game
 
-- Phone check: the paddle's lift above the finger, the strike ring, sound
-  latency, frame rate on the phone and on the tablet, the swipe that fires a
-  shot.
-- Difficulty measured with a living hand, not only the stand's bot.
-- A second black hole in the deeper rounds of the hole.
-- Paddles that carry the law of their realm wherever it fits.
-- A live project page in `docs/`: the game in the browser, played with a finger.
+Done so far, checked on the stand and, where marked, on the phone:
+
+- Six realms, played in a shuffled order after the hole (on the phone: they
+  look right).
+- The cabinet of curiosities, the story pages, matches that wait.
+- Larger ball, story button and lettering (on the phone: easier to use, the
+  realm's name can be read).
+
+Next, in this order:
+
+1. The double slit: the net becomes a wall with two slits, fringes on the far
+   half, a detector lamp that turns them off; shadow balls from neighbouring
+   worlds on its deeper rounds.
+2. The wormhole, then the collider with the rally drawn as a diagram, then
+   tunnelling, the interferometer, time dilation, the pulsar, dark matter.
+3. Galileo's ship, Zeno, epicycles, harmony, the written future, mixed in
+   among them.
+4. The stories, one essay per realm, in five parts as above.
+5. Phone check: the paddle's lift above the finger, the strike ring, sound
+   latency, frame rate on the phone and on the tablet, the swipe that fires a
+   shot.
+6. Difficulty measured with a living hand, not only the stand's bot; longer
+   rallies on the first rounds.
+7. A second black hole in the deeper rounds of the hole.
+8. Paddles that carry the law of their realm wherever it fits.
+9. A live project page in `docs/`: the game in the browser, played with a
+   finger.
+10. Releases and the project page are made by the author; the line on the
+    author's showcase goes through the duty desk.
