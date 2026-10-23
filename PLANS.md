@@ -41,6 +41,8 @@ Each story is an essay of the same five parts:
 | The round table | knights in a ring at a table with no head; one seat always empty, the perilous seat that waits for the worthy | Wace, Layamon, Robert de Boron, Malory; the oak table on the wall at Winchester, 24 knights and the king | equality without a head; a legend that grew from no number to sixteen hundred |
 | Leonardo's notebook | water drawn as curls; friction a quarter of the weight, whatever the area of contact; a knight in armour moved by cords and pulleys; mirror writing | Leonardo da Vinci; Amontons, who found the friction rule again two centuries later | seeing as a way of knowing; the engineer who mocked the seekers of perpetual motion |
 | The board | a position from a famous game set on the table; the net between the fourth and fifth ranks; pieces knocked over and off | von Kempelen and his chess automaton with a man inside; Zermelo, Shannon, Turing; the masters whose games set the boards | a finite game solved in principle and never in practice; the hidden player in the machine |
+| The big top | a rider standing on a galloping horse, held by the turn; a ring thirteen metres across ever since; the trampoline, a spring you can stand on | Astley, Hooke, Léotard, Nissen | force and stretch in proportion; the body as a spring that learns its own rhythm |
+| The darkroom | the far half of the table seen through a different eye each time: negative, sepia, mosaic, heat, X-rays, a colour-blind eye, a long exposure | Talbot, Herschel, Röntgen, Maxwell, Dalton | we never see the thing, only its image; the cave and its shadows |
 | Wormhole | a bridge through spacetime | Einstein, Rosen, Wheeler, Morris, Thorne | shortcuts and causality |
 | Collider | beams bent by magnets and brought into collision | Lawrence; the builders of the great rings; Feynman for the diagrams | finding the small with the very large |
 | Tunnelling | a particle crossing a wall it cannot climb | Gamow, Gurney, Condon | probability as a physical thing |
@@ -81,17 +83,26 @@ Next, in this order:
    of them, every one checked by replaying the game's moves. Pieces stop the
    ball, tip over and fall off the table; the king rocks and stays standing.
    The material knocked down is counted, and the cabinet keeps the best piece.
-5. Galileo's ship, Zeno, epicycles, harmony, the written future, mixed in
+5. The big top: the camera climbs under the dome and looks almost straight
+   down; the table is a trampoline whose dent rocks and fades; a ball that
+   lands while the cloth rises gains height, one that lands while it sinks
+   loses it; a fresh dent tilts the next bounce sideways; a tightrope walker
+   crosses along the net. The darkroom: the opponent's half is seen through a
+   filter that changes as the match goes, from a long list; each eye has its
+   own catch (the mosaic shows the ball only to the nearest cell, heat shows
+   only what was struck, X-rays see through the net, the long exposure drags
+   a trail behind the truth).
+6. Galileo's ship, Zeno, epicycles, harmony, the written future, mixed in
    among them.
-6. The stories, one essay per realm, in five parts as above.
-7. Phone check: the paddle's lift above the finger, the strike ring, sound
+7. The stories, one essay per realm, in five parts as above.
+8. Phone check: the paddle's lift above the finger, the strike ring, sound
    latency, frame rate on the phone and on the tablet, the swipe that fires a
    shot.
-8. Difficulty measured with a living hand, not only the stand's bot; longer
+9. Difficulty measured with a living hand, not only the stand's bot; longer
    rallies on the first rounds.
-9. A second black hole in the deeper rounds of the hole.
-10. Paddles that carry the law of their realm wherever it fits.
-11. A live project page in `docs/`: the game in the browser, played with a
+10. A second black hole in the deeper rounds of the hole.
+11. Paddles that carry the law of their realm wherever it fits.
+12. A live project page in `docs/`: the game in the browser, played with a
     finger.
-12. Releases and the project page are made by the author; the line on the
+13. Releases and the project page are made by the author; the line on the
     author's showcase goes through the duty desk.
