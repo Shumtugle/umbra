@@ -243,15 +243,9 @@ public final class Stand implements World.Host {
         } else if (c.equals("realm")) {
             world.pick(Integer.parseInt(p[1]));
         } else if (c.equals("cam")) {
-            // another view: height, degrees below the horizon, how far back, then the top kept in view
-            Cam.HEIGHT = Float.parseFloat(p[1]);
-            Cam.PITCH = (float) Math.toRadians(Float.parseFloat(p[2]));
-            Cam.BACK = Float.parseFloat(p[3]);
-            if (p.length > 5) {
-                Cam.TOP_Y = Float.parseFloat(p[4]);
-                Cam.TOP_Z = Game.L + Float.parseFloat(p[5]);
-            }
-            if (p.length > 6) Cam.DEEP = Float.parseFloat(p[6]);
+            // another view: height, degrees below the horizon, how far back, the top kept in view, the depth
+            Cam.tried = new Cam.Eye(f(p[1]), f(p[2]), f(p[3]), p.length > 4 ? f(p[4]) : 0.35f,
+                    p.length > 5 ? f(p[5]) : 0.4f, p.length > 6 ? f(p[6]) : -0.45f);
         } else if (c.equals("seed")) {
             world.seedPinned = Integer.parseInt(p[1]);
             world.pick(world.realmIndex);

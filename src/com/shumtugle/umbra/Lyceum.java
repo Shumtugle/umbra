@@ -37,6 +37,14 @@ final class Lyceum extends Realm {
         return "IT FLIES STRAIGHT, THEN FALLS TO ITS PLACE";
     }
 
+
+    /** A courtyard seen from a little lower, as from the colonnade. */
+    @Override
+    Cam.Eye eye() {
+        return EYE;
+    }
+
+    private static final Cam.Eye EYE = new Cam.Eye(4.2f, 54f, 0f, 0.4f, 0.45f, -0.45f);
     @Override
     float height() {
         return 0.6f;

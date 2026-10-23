@@ -1,0 +1,50 @@
+screen 1096 2560
+level 4
+realm 0
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot e_0
+realm 1
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot e_1
+realm 2
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot e_2
+realm 3
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot e_3
+realm 4
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot e_4
+realm 5
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot e_5
+realm 6
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot e_6
+realm 7
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot e_7

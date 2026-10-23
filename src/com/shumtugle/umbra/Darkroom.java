@@ -54,6 +54,7 @@ final class Darkroom extends Realm {
     private int[] src, keep, tmp, paint;
     private float[] cover, flowX, flowY, grain, heat;
     private boolean fresh = true;
+    private Cam seenCam;
     private final java.util.Random rnd = new java.util.Random(1839);
 
     @Override
@@ -104,6 +105,14 @@ final class Darkroom extends Realm {
         return new String[]{"darkroom/" + EYES[eye], "darkroom"};
     }
 
+
+    /** High, so that the image over the net is large. */
+    @Override
+    Cam.Eye eye() {
+        return EYE;
+    }
+
+    private static final Cam.Eye EYE = new Cam.Eye(5.0f, 58f, 0.2f, 0.35f, 0.4f, -0.45f);
     @Override
     float height() {
         return LAMP_Y;
@@ -151,7 +160,8 @@ final class Darkroom extends Realm {
     // ---- the eye, laid over the far half at the depth of the net
 
     private void prepare(Scene s) {
-        if (s.w == w && s.h == h && src != null) return;
+        if (s.cam == seenCam && src != null) return;
+        seenCam = s.cam;
         w = s.w;
         h = s.h;
         Cam cam = s.cam;

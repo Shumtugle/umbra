@@ -56,6 +56,14 @@ final class River extends Realm {
         return "THE SNOW SHOWS THE WIND";
     }
 
+
+    /** A duel is watched from low down, near the snow. */
+    @Override
+    Cam.Eye eye() {
+        return EYE;
+    }
+
+    private static final Cam.Eye EYE = new Cam.Eye(3.9f, 51f, -0.1f, 0.45f, 0.5f, -0.5f);
     @Override
     float height() {
         return 0.6f;

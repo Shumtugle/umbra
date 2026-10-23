@@ -137,6 +137,11 @@ abstract class Realm {
 
     // ---- the look
 
+    /** Where this realm is watched from; each match moves it a little. */
+    Cam.Eye eye() {
+        return Cam.HIGH;
+    }
+
     /** Paints what lies around the table, once per screen size. */
     abstract void backdrop(Scene s, int[] out);
 

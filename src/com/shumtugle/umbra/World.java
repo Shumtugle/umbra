@@ -11,7 +11,7 @@ package com.shumtugle.umbra;
  * and each game pixel is a whole number of screen pixels.
  */
 final class World implements Game.Sink {
-    static final String VERSION = "0.10";   // shown on screen; keep in step with versionName
+    static final String VERSION = "0.11";   // shown on screen; keep in step with versionName
     static final int TARGET_W = 270;       // about this many game pixels across
 
     static final int DOWN = 0, MOVE = 1, UP = 2;
@@ -181,9 +181,14 @@ final class World implements Game.Sink {
         if (game == null) attract();
     }
 
-    /** The scene of a realm, painted the first time it is needed. */
+    /**
+     * The scene of a realm, painted the first time it is needed and again whenever
+     * the eye has moved: each match watches its realm from a slightly other place.
+     */
     private Scene sceneOf(int i) {
-        if (scenes[i] == null) scenes[i] = new Scene(w, h, realms[i]);
+        Realm r = realms[i];
+        Cam.Eye eye = Cam.tried != null ? Cam.tried : r.eye().vary(round(), r.key());
+        if (scenes[i] == null || !scenes[i].cam.eye.same(eye)) scenes[i] = new Scene(w, h, r, eye);
         return scenes[i];
     }
 
@@ -215,6 +220,7 @@ final class World implements Game.Sink {
     }
 
     private void attract() {
+        scene = sceneOf(realmIndex);
         realm().setLevel(playLevel());
         if (realm().seeds() > 0) realm().seed(nextSeed(realm(), false));
         game = new Game(this, realm(), seed++);
@@ -723,23 +729,22 @@ final class World implements Game.Sink {
         int y0 = h - (int) (Cam.BAND * w);
         shade(f, y0 - 8, h, 0.5f);
         int m = 8, right = w - m;
-        text(f, "YOU", m, y0 + 3, 2, 0xFFFF8E7A);
-        text(f, "CPU", right - PixelFont.width("CPU", 2), y0 + 3, 2, 0xFFA898F0);
-        text(f, a, m, y0 + 20, 4, 0xFFF2F6FA);
-        text(f, b, right - PixelFont.width(b, 4), y0 + 20, 4, 0xFFF2F6FA);
-        // the realm's name, and the round, between the scores
+        // the realm's name across the top of the band, the scores under it at either side, the round between
         String name = g.realm.name();
-        int left = m + 44, room = right - 44 - left;
-        int ns = PixelFont.width(name, 2) <= room ? 2 : 1;
-        text(f, name, left + (room - PixelFont.width(name, ns)) / 2, y0 + 8, ns, 0xFFFFC857);
+        int ns = PixelFont.width(name, 2) <= w - 2 * m ? 2 : 1;
+        center(f, name, y0 + 2, ns, 0xFFFFC857);
+        text(f, "YOU", m, y0 + 21, 1, 0xFFFF8E7A);
+        text(f, a, m + 22, y0 + 17, 4, 0xFFF2F6FA);
+        text(f, "CPU", right - PixelFont.width("CPU", 1), y0 + 21, 1, 0xFFA898F0);
+        text(f, b, right - 22 - PixelFont.width(b, 4), y0 + 17, 4, 0xFFF2F6FA);
         String rd = debug ? "DEBUG  LEVEL " + dbLevel : "ROUND " + round();
-        text(f, rd, left + (room - PixelFont.width(rd, 1)) / 2, y0 + 28, 1, debug ? 0xFFFF6A5A : 0xFF8FA4CC);
+        center(f, rd, y0 + 28, 1, debug ? 0xFFFF6A5A : 0xFF8FA4CC);
         // shots still in hand, where the realm has them: a small pistol for each, just over the band
         for (int side = 0; side < 2; side++)
             for (int k = 0; k < g.shotsLeft[side]; k++) pistol(f, side == 0 ? m + k * 26 : right - 22 - k * 26, y0 - 16, side == 1);
         // who serves: a ball by that side's score
-        float sx = g.server == 0 ? m + PixelFont.width(a, 4) + 9 : right - PixelFont.width(b, 4) - 9;
-        f.discAA(sx, y0 + 34, 3.6f, 0xFFF6F3EC, 1f);
+        float sx = g.server == 0 ? m + 22 + PixelFont.width(a, 4) + 9 : right - 22 - PixelFont.width(b, 4) - 9;
+        f.discAA(sx, y0 + 31, 3.6f, 0xFFF6F3EC, 1f);
         if (g.msgT > 0f && g.state != Game.OVER) {
             int col = g.msgSide == 0 ? 0xFF9BE68A : g.msgSide == 1 ? 0xFFF28B82 : 0xFFF2F6FA;
             if (!g.human) col = 0xFFF2F6FA;

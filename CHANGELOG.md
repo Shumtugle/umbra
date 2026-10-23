@@ -1,5 +1,19 @@
 # Changes
 
+## 0.11
+
+- The score, the realm's name and the round lie in a band at the bottom of the
+  screen. The paddle rides above the finger, so that strip is never played on
+  and is always under the finger anyway; the top of the screen is free for the
+  court.
+- The court is fitted down to the deepest place the finger can really take the
+  paddle, not past it.
+- Every realm is watched from an eye of its own, and the eye moves a little from
+  one match to the next: higher and farther back on the whole, so the table is
+  larger and the far half less squeezed; the station and the darkroom from
+  higher still, the duel by the river from lower down. The eye never moves
+  during a match, so the paddle under the finger never drifts.
+
 ## 0.10
 
 - A debug screen, opened by holding a finger on the big title for a second and

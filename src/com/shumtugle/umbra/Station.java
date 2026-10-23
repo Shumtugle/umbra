@@ -44,6 +44,14 @@ final class Station extends Realm {
         return "THE BALL CURVES THE WAY THE STARS TURN";
     }
 
+
+    /** A turning station is best seen from above, so the whole deck turns in view. */
+    @Override
+    Cam.Eye eye() {
+        return EYE;
+    }
+
+    private static final Cam.Eye EYE = new Cam.Eye(5.0f, 60f, 0.2f, 0.35f, 0.4f, -0.45f);
     @Override
     float height() {
         return 0.6f;

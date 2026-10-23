@@ -1,0 +1,8 @@
+screen 1096 2560
+level 4
+realm 4
+wait 0.4
+tap 137 300
+bot on
+wait 4.5
+shot band

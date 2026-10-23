@@ -67,6 +67,14 @@ final class Slit extends Realm {
         return "GLASS";
     }
 
+
+    /** The screen stands tall at the net; from high up it hides less of the far half. */
+    @Override
+    Cam.Eye eye() {
+        return EYE;
+    }
+
+    private static final Cam.Eye EYE = new Cam.Eye(5.0f, 58f, 0.2f, 0.35f, 0.4f, -0.45f);
     @Override
     float height() {
         return WALL_H;

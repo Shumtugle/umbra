@@ -32,11 +32,11 @@ final class Scene {
 
     private int[] lensSrc = new int[0];   // see scratch()
 
-    Scene(int w, int h, Realm realm) {
+    Scene(int w, int h, Realm realm, Cam.Eye eye) {
         this.w = w;
         this.h = h;
         this.realm = realm;
-        cam = new Cam(w, h);
+        cam = new Cam(w, h, eye);
         still = new int[w * h];
         bake();
     }

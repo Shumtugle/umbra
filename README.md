@@ -23,6 +23,8 @@ is computed pixel by pixel on the processor, and the sounds are synthesized.
 - **The cloud chamber, 1932.** Every ball carries a charge, red or blue; in the
   magnetic field between the coils red turns one way and blue the other, and
   the ball's trail of mist shows the curve.
+- **The eye.** Each realm has its own view of the table, and it shifts a little
+  from match to match; the score sits at the bottom, under the finger.
 - **Debug.** Hold a finger on the big title for a second: a screen to pick any
   realm, any of its versions and any level, played without counting.
 - **The darkroom, 1839.** The ball flies plain, and the law is in the eye:
