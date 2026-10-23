@@ -111,6 +111,25 @@ abstract class Realm {
         return Col.clamp01(1f - (r - 0.05f) / 0.9f);
     }
 
+    // ---- versions: a realm that comes in many, one for each match
+
+    /** How many versions this realm comes in; 0 where there is only one. */
+    int seeds() {
+        return 0;
+    }
+
+    /** Sets the version for the match to come. */
+    void seed(int i) {}
+
+    int seed() {
+        return 0;
+    }
+
+    /** The stories to show, in order, by their names under the stories folder. */
+    String[] stories() {
+        return new String[]{key()};
+    }
+
     // ---- the look
 
     /** Paints what lies around the table, once per screen size. */

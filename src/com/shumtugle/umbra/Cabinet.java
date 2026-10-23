@@ -75,6 +75,9 @@ final class Cabinet {
         else if (k.equals("nucleus")) atom(f, cx, oy, s * 0.6f, t);
         else if (k.equals("lyceum")) amphora(f, cx, oy, s * 0.62f);
         else if (k.equals("river")) pistol(f, cx, oy, s * 0.7f);
+        else if (k.equals("chamber")) chamber(f, cx, oy, s * 0.6f);
+        else if (k.equals("slit")) slits(f, cx, oy, s * 0.62f);
+        else if (k.equals("darkroom")) camera(f, cx, oy, s * 0.66f);
         else f.discAA(cx, oy, s * 0.3f, 0xFFB8C8E0, 1f);
         // the glass dome: a faint body, a bright edge and a glint
         f.ellipseAA(cx, cy - s * 0.5f, s * 0.86f, s * 0.6f, 0xFFDDEEFF, 0.06f);
@@ -153,5 +156,49 @@ final class Cabinet {
         f.lineAA(cx + s * 0.1f, cy - s * 0.02f, cx + s * 0.6f, cy + s * 0.3f, Math.max(1.6f, s * 0.26f), 0xFF5A3418, 1f);
         f.discAA(cx + s * 0.62f, cy + s * 0.32f, Math.max(1f, s * 0.12f), 0xFFD8DEE6, 1f);
         f.lineAA(cx + s * 0.05f, cy + s * 0.04f, cx + s * 0.12f, cy + s * 0.2f, 1f, 0xFFC8D0D8, 1f);
+    }
+
+    /** A glass cylinder of vapour, two tracks curling opposite ways inside it. */
+    private static void chamber(Px f, float cx, float cy, float s) {
+        f.ellipseAA(cx, cy, s * 0.7f, s * 0.8f, 0xFF1A2430, 0.9f);
+        for (int side = -1; side <= 1; side += 2) {
+            float lx = cx, ly = cy + s * 0.6f;
+            for (int i = 1; i <= 24; i++) {
+                float a = i / 24f * 7f, r = s * 0.75f * (1f - i / 30f);
+                float x = cx + side * (r - r * (float) Math.cos(a)) * 0.7f, y = cy + s * 0.6f - r * (float) Math.sin(a) - i * s * 0.02f;
+                f.lineAA(lx, ly, x, y, 0.8f, side < 0 ? 0xFFEFF6FF : 0xFFFFB0C8, 0.9f);
+                lx = x;
+                ly = y;
+            }
+        }
+        f.ringAA(cx, cy - s * 0.8f, s * 0.7f, s * 0.18f, 1f, 0xFFB8C8D8, 0.8f);
+        f.ellipseAA(cx, cy + s * 0.85f, s * 0.75f, s * 0.2f, 0xFF5A626E, 1f);
+    }
+
+    /** A dark plate with two bright slits, and the fringes they make on a screen behind. */
+    private static void slits(Px f, float cx, float cy, float s) {
+        f.ellipseAA(cx, cy - s * 0.1f, s * 0.95f, s * 0.6f, 0xFF14161C, 1f);
+        for (int k = -3; k <= 3; k++) {
+            float op = 0.9f * (float) Math.exp(-k * k / 6f);
+            f.lineAA(cx + k * s * 0.24f, cy - s * 0.55f, cx + k * s * 0.24f, cy + s * 0.3f, Math.max(1f, s * 0.1f), 0xFFFF6A7A, op);
+        }
+        f.lineAA(cx - s * 0.7f, cy + s * 0.55f, cx + s * 0.7f, cy + s * 0.55f, Math.max(1.6f, s * 0.3f), 0xFF2A2E36, 1f);
+        f.lineAA(cx - s * 0.25f, cy + s * 0.45f, cx - s * 0.25f, cy + s * 0.65f, 1f, 0xFFFFE8C8, 1f);
+        f.lineAA(cx + s * 0.25f, cy + s * 0.45f, cx + s * 0.25f, cy + s * 0.65f, 1f, 0xFFFFE8C8, 1f);
+    }
+
+    /** A plate camera: a wooden box, black bellows in folds, a brass lens. */
+    private static void camera(Px f, float cx, float cy, float s) {
+        float bw = Math.max(1.6f, s * 0.7f);
+        f.lineAA(cx + s * 0.35f, cy - s * 0.4f, cx + s * 0.35f, cy + s * 0.45f, bw, 0xFF8A5A30, 1f);
+        f.lineAA(cx + s * 0.35f, cy - s * 0.4f, cx + s * 0.35f, cy - s * 0.3f, bw, 0xFFB07A48, 1f);
+        for (int i = 0; i < 5; i++) {
+            float x = cx + s * (0.05f - i * 0.12f), hgt = s * (0.36f - i * 0.04f);
+            f.lineAA(x, cy - hgt, x, cy + hgt, Math.max(1f, s * 0.13f), i % 2 == 0 ? 0xFF1A1614 : 0xFF2E2824, 1f);
+        }
+        f.discAA(cx - s * 0.62f, cy, Math.max(1.2f, s * 0.2f), 0xFFC8A040, 1f);
+        f.discAA(cx - s * 0.62f, cy, Math.max(0.8f, s * 0.12f), 0xFF101418, 1f);
+        f.discAA(cx - s * 0.66f, cy - s * 0.04f, Math.max(0.5f, s * 0.04f), 0xFFE8F0FF, 0.8f);
+        f.ellipseAA(cx, cy + s * 0.6f, s * 0.8f, s * 0.08f, 0xFF5A3A20, 1f);
     }
 }

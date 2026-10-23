@@ -30,6 +30,7 @@ Each story is an essay of the same five parts:
 | `lyceum` | The Lyceum, 335 BC | the thrown stone in the books on nature: violent motion, natural place; later, the theory of impetus | Aristotle, Philoponus, Buridan; Eudoxus and Ptolemy for the cosmos in the mosaic | why a wrong theory lasts two thousand years; common sense as a theory |
 | `river` | The Black River, 1837 | a winter duel by a frozen river; the wind as a force on a flying body | the poet and his opponent, the seconds; Beaufort for the wind | honour, chance and fate; what a rule is when it is a ritual |
 | `slit` | The double slit, 1927 | one particle at a time through two slits, and the fringes it builds; a detector that watches one slit and wipes them out | Young, Davisson, Germer, Tonomura, Feynman; Deutsch for the shadow particles | interference, the observer, the many worlds |
+| `darkroom` | The darkroom, 1839 | the far half of the table seen through a different eye in every match: the eyes of instruments (negative, sepia, mosaic, heat, X-rays, a colour-blind eye, a long exposure) and the eyes of painters (Van Gogh, Monet, Manet, Renoir, Degas, Cézanne, Gauguin, Seurat, Matisse, Chagall, Malevich, Klimt, Munch, Kandinsky, Picasso, Dalí, Miró, Magritte, Modigliani, Klee, Pollock) | Talbot, Herschel, Röntgen, Maxwell, Dalton; Chevreul and Rood, whose books on colour the painters read; the Salon des Refusés, 1863 | we never see the thing, only its image; the cave and its shadows; painting as a study of light and of the one who looks |
 | `chamber` | The cloud chamber, 1932 | tracks of charged particles in supersaturated vapour, curled by a magnet; a track that curled the wrong way | Wilson, Anderson, Blackett | seeing the invisible by what it leaves behind; antimatter found by its curl |
 
 ### Realms to come, and their stories
@@ -42,7 +43,6 @@ Each story is an essay of the same five parts:
 | Leonardo's notebook | water drawn as curls; friction a quarter of the weight, whatever the area of contact; a knight in armour moved by cords and pulleys; mirror writing | Leonardo da Vinci; Amontons, who found the friction rule again two centuries later | seeing as a way of knowing; the engineer who mocked the seekers of perpetual motion |
 | The board | a position from a famous game set on the table; the net between the fourth and fifth ranks; pieces knocked over and off | von Kempelen and his chess automaton with a man inside; Zermelo, Shannon, Turing; the masters whose games set the boards | a finite game solved in principle and never in practice; the hidden player in the machine |
 | The big top | a rider standing on a galloping horse, held by the turn; a ring thirteen metres across ever since; the trampoline, a spring you can stand on | Astley, Hooke, Léotard, Nissen | force and stretch in proportion; the body as a spring that learns its own rhythm |
-| The darkroom | the far half of the table seen through a different eye in every match: the eyes of instruments (negative, sepia, mosaic, heat, X-rays, a colour-blind eye, a long exposure) and the eyes of painters (Van Gogh, Monet, Manet, Renoir, Degas, Cézanne, Gauguin, Seurat, Matisse, Chagall, Malevich, Klimt, Munch, Kandinsky, Picasso, Dalí, Miró, Magritte, Modigliani, Klee, Pollock) | Talbot, Herschel, Röntgen, Maxwell, Dalton; Chevreul and Rood, whose books on colour the painters read; the Salon des Refusés, 1863 | we never see the thing, only its image; the cave and its shadows; painting as a study of light and of the one who looks |
 | Wormhole | a bridge through spacetime | Einstein, Rosen, Wheeler, Morris, Thorne | shortcuts and causality |
 | Collider | beams bent by magnets and brought into collision | Lawrence; the builders of the great rings; Feynman for the diagrams | finding the small with the very large |
 | Tunnelling | a particle crossing a wall it cannot climb | Gamow, Gurney, Condon | probability as a physical thing |
@@ -60,9 +60,11 @@ Each story is an essay of the same five parts:
 
 Done so far, checked on the stand and, where marked, on the phone:
 
-- Seven realms, played in a shuffled order after the hole (on the phone: they
+- Eight realms, played in a shuffled order after the hole (on the phone: they
   look right).
 - The cabinet of curiosities, the story pages, matches that wait.
+- Realms in versions, from a bag of their own: the darkroom's thirty-one eyes,
+  each with a card of its own before the realm's essay.
 - Larger ball, story button and lettering (on the phone: easier to use, the
   realm's name can be read).
 
@@ -87,18 +89,8 @@ Next, in this order:
    down; the table is a trampoline whose dent rocks and fades; a ball that
    lands while the cloth rises gains height, one that lands while it sinks
    loses it; a fresh dent tilts the next bounce sideways; a tightrope walker
-   crosses along the net. The darkroom: the opponent's half is seen through a
-   filter that changes as the match goes, from a long list; each eye has its
-   own catch (the mosaic shows the ball only to the nearest cell, heat shows
-   only what was struck, X-rays see through the net, the long exposure drags
-   a trail behind the truth). The painters' eyes copy a manner, never a
-   picture: Malevich turns the ball into a black square, Renoir scatters round
-   spots of sun that look like balls, Picasso shows it twice from two points
-   of view, Pollock lets every stroke splash paint that stays.
-   Each eye is a seed of the realm: one eye per match, drawn from a bag so
-   none comes back until all have been seen, and each with a short card of
-   its own under the realm's story. The same seeds serve the board (one
-   position per match) and the round table (one ring of knights).
+   crosses along the net. The board and the round table come in versions
+   the way the darkroom does: one position, or one ring of knights, per match.
 6. Galileo's ship, Zeno, epicycles, harmony, the written future, mixed in
    among them.
 7. The stories, one essay per realm, in five parts as above.

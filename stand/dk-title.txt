@@ -1,0 +1,5 @@
+screen 1096 2560
+realm 7
+seed 20
+wait 0.8
+shot title

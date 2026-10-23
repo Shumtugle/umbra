@@ -196,18 +196,24 @@ public final class MainActivity extends Activity implements World.Host {
     }
 
     /** The story's text, from the package; a line of its own if the story is not written yet. */
-    private String readStory(String key) {
-        try {
-            InputStream in = getAssets().open("stories/" + key + ".txt");
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buf = new byte[4096];
-            int n;
-            while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
-            in.close();
-            return out.toString("UTF-8").trim();
-        } catch (IOException e) {
-            return "This story is still being written.";
+    /** The stories named, one after another; a version's card comes before its realm's essay. */
+    private String readStory(String keys) {
+        StringBuilder all = new StringBuilder();
+        for (String key : keys.split(" ")) {
+            try {
+                InputStream in = getAssets().open("stories/" + key + ".txt");
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                byte[] buf = new byte[4096];
+                int n;
+                while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+                in.close();
+                if (all.length() > 0) all.append("\n\n\u2042\n\n");
+                all.append(out.toString("UTF-8").trim());
+            } catch (IOException e) {
+                // a story not written yet is left out
+            }
         }
+        return all.length() > 0 ? all.toString() : "This story is still being written.";
     }
 
     /** A line in capitals made a sentence: only its first letter stays large. */

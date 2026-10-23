@@ -8,7 +8,7 @@ package com.shumtugle.umbra;
  * output to its speaker, the stand writes it to a file.
  */
 final class Synth {
-    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3, HUM_BLIZZARD = 4, HUM_CHAMBER = 5, HUM_OPTICS = 6;
+    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3, HUM_BLIZZARD = 4, HUM_CHAMBER = 5, HUM_OPTICS = 6, HUM_DARKROOM = 7;
 
     final int rate;
     private final float[][] bank = new float[13][];
@@ -24,6 +24,7 @@ final class Synth {
     // the hum: targets set from the game, values eased toward them per sample
     private volatile float humLevelT, humNearT;
     private volatile int humKind;
+    private float dripAmp, dripPh, dripF = 1200f;
     private float crackle, crackleLp, phSwell, cicLow, cicBand, phCic, phChorus, wind;
     private float humLevel, humNear, ph1, ph2, ph3, svfLow, svfBand;
     private int seed = 0x2545F491;
@@ -295,7 +296,8 @@ final class Synth {
         }
         float lt = humLevelT, nt = humNearT;
         boolean mains = humKind == HUM_MAINS, station = humKind == HUM_STATION, cicadas = humKind == HUM_CICADAS,
-                blizzard = humKind == HUM_BLIZZARD, chamber = humKind == HUM_CHAMBER, optics = humKind == HUM_OPTICS;
+                blizzard = humKind == HUM_BLIZZARD, chamber = humKind == HUM_CHAMBER, optics = humKind == HUM_OPTICS,
+                darkroom = humKind == HUM_DARKROOM;
         float cicF = 2f * (float) Math.sin(Math.PI * 5600.0 / rate);
         float ease = 1f - (float) Math.exp(-1.0 / (0.06 * rate));
         float twoPi = 6.2831853f / rate;
@@ -317,7 +319,7 @@ final class Synth {
             // the hum: a low drone that rises and thickens as the ball comes near, and a thin whine
             humLevel += (lt - humLevel) * ease;
             humNear += (nt - humNear) * ease;
-            float f0 = mains || chamber ? 25f : station ? 33f : 41f * (1f + 0.4f * humNear);
+            float f0 = mains || chamber || darkroom ? 25f : station ? 33f : 41f * (1f + 0.4f * humNear);
             ph1 += f0 * twoPi;
             ph2 += f0 * 2.003f * twoPi;
             ph3 += f0 * 1.498f * twoPi;
@@ -325,7 +327,29 @@ final class Synth {
             if (ph2 > 6.2831853f) ph2 -= 6.2831853f;
             if (ph3 > 6.2831853f) ph3 -= 6.2831853f;
             float hum;
-            if (optics) {
+            if (darkroom) {
+                // a darkroom: water running through the wash tray, the safelight's transformer, a drop now and then
+                float nz = noise();
+                phSwell += 0.09f * twoPi;
+                if (phSwell > 6.2831853f) phSwell -= 6.2831853f;
+                float fc = (650f + 300f * (float) Math.sin(phSwell)) / rate;
+                float fq = 2f * (float) Math.sin(Math.PI * fc);
+                svfLow += fq * svfBand;
+                float high = nz - svfLow - 0.25f * svfBand;
+                svfBand += fq * high;
+                float gurgle = 0.7f + 0.3f * (float) Math.sin(phSwell * 3.1f);
+                if (dripAmp < 0.002f && noise() > 1f - 0.000012f) {
+                    dripAmp = 0.22f;
+                    dripF = 1100f + 500f * Math.abs(noise());
+                }
+                dripPh += dripF * twoPi;
+                if (dripPh > 6.2831853f) dripPh -= 6.2831853f;
+                dripF *= 1.00004f;
+                float drip = dripAmp * (float) Math.sin(dripPh);
+                dripAmp *= 0.9993f;
+                float coil = (float) (Math.sin(ph1 * 2.0) * 0.5 + Math.sin(ph1 * 4.0) * 0.2);
+                hum = humLevel * (svfBand * 0.03f * gurgle + coil * 0.012f + drip);
+            } else if (optics) {
                 // a dark optics room: still air, and the thin high singing of a light source
                 float nz = noise();
                 wind += (nz - wind) * 0.02f;

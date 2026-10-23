@@ -11,7 +11,7 @@ package com.shumtugle.umbra;
  * and each game pixel is a whole number of screen pixels.
  */
 final class World implements Game.Sink {
-    static final String VERSION = "0.8";   // shown on screen; keep in step with versionName
+    static final String VERSION = "0.9";   // shown on screen; keep in step with versionName
     static final int TARGET_W = 270;       // about this many game pixels across
 
     static final int DOWN = 0, MOVE = 1, UP = 2;
@@ -50,7 +50,7 @@ final class World implements Game.Sink {
     float lift;                            // the paddle rides this far above the finger
     int screen = MENU;
     int level, won, lost;                  // level is the opponent's strength; it follows the results unseen
-    final Realm[] realms = {new Hole(), new Station(), new Nucleus(), new Lyceum(), new River(), new Chamber(), new Slit()};
+    final Realm[] realms = {new Hole(), new Station(), new Nucleus(), new Lyceum(), new River(), new Chamber(), new Slit(), new Darkroom()};
     int realmIndex;
     java.util.Random shuffle = new java.util.Random(System.nanoTime());
     private int[] bag = new int[0];
@@ -119,6 +119,48 @@ final class World implements Game.Sink {
         show(bag[bagNext++]);
     }
 
+    /** A version picked by hand on the stand; -1 leaves it to the bag. */
+    int seedPinned = -1;
+
+    /**
+     * The version of a realm for its next match, from a shuffled bag of its own
+     * that is kept between sessions, so that each version comes round once before
+     * any comes again. The title screen peeks at it; the match takes it.
+     */
+    private int nextSeed(Realm r, boolean take) {
+        int n = r.seeds();
+        if (seedPinned >= 0) return seedPinned % n;
+        String key = "seeds." + r.key();
+        int[] bag = null;
+        int next = 0;
+        String[] p = host.prefText(key).split(",");
+        if (p.length == n + 1) {
+            try {
+                next = Integer.parseInt(p[0]);
+                bag = new int[n];
+                for (int i = 0; i < n; i++) bag[i] = Integer.parseInt(p[i + 1]);
+            } catch (NumberFormatException e) {
+                bag = null;
+            }
+        }
+        if (bag == null || next < 0 || next >= n) {
+            bag = new int[n];
+            for (int i = 0; i < n; i++) bag[i] = i;
+            for (int i = n - 1; i > 0; i--) {
+                int j = shuffle.nextInt(i + 1), t = bag[i];
+                bag[i] = bag[j];
+                bag[j] = t;
+            }
+            next = 0;
+        }
+        int s = ((bag[next] % n) + n) % n;
+        if (take) next++;
+        StringBuilder out = new StringBuilder().append(next);
+        for (int v : bag) out.append(',').append(v);
+        host.setPrefText(key, out.toString());
+        return s;
+    }
+
     private void show(int i) {
         realmIndex = (i + realms.length) % realms.length;
         scene = sceneOf(realmIndex);
@@ -163,6 +205,7 @@ final class World implements Game.Sink {
 
     private void attract() {
         realm().setLevel(level);
+        if (realm().seeds() > 0) realm().seed(nextSeed(realm(), false));
         game = new Game(this, realm(), seed++);
         game.startMatch(false, 0.62f);
         screen = MENU;
@@ -175,6 +218,8 @@ final class World implements Game.Sink {
 
     private void begin() {
         realm().setLevel(level);
+        Realm r = realm();
+        if (r.seeds() > 0) r.seed(resume ? host.pref("m.seed", r.seed()) : nextSeed(r, true));
         game = new Game(this, realm(), seed++ * 7919L);
         screen = PLAY;
         game.startMatch(true, skill(level));
@@ -197,6 +242,7 @@ final class World implements Game.Sink {
         host.setPref("m.shot0", g.shotsLeft[0]);
         host.setPref("m.shot1", g.shotsLeft[1]);
         host.setPref("m.behind", g.worstBehind);
+        host.setPref("m.seed", g.realm.seed());
     }
 
     private void clearMatch() {
@@ -230,7 +276,9 @@ final class World implements Game.Sink {
         touching = false;
         host.cue(Game.C_TICK, 0.5f, 1.2f);
         Realm r = realm();
-        host.story(r.key(), r.name(), r.note());
+        StringBuilder keys = new StringBuilder();
+        for (String k : r.stories()) keys.append(keys.length() > 0 ? " " : "").append(k);
+        host.story(keys.toString(), r.name(), r.note());
     }
 
     /** The story was closed: the game goes on where it stopped. */

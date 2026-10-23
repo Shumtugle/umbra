@@ -1,0 +1,1 @@
+A mosaic. Every picture made of cells, from the tiles of a Roman floor to the cones of the eye and the pixels of a screen, can say where a thing is only to the nearest cell. The ball over there jumps from cell to cell; where it really is inside a cell, you guess.

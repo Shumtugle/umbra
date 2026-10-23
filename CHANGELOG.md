@@ -1,5 +1,25 @@
 # Changes
 
+## 0.9
+
+- The darkroom, 1839: our half of the table lies under a red safelight, the far
+  half is the easel under the enlarger, and whatever is over there, the far half,
+  the opponent and the ball, is seen as an image through one of thirty-one eyes.
+  The image is made at the depth of the net, so a ball on this side is always
+  seen as it is. The instruments: a negative, a daguerreotype, a cyanotype, old
+  sepia, a halftone screen, a mosaic, a heat camera, X-rays, a colour-blind eye,
+  a long exposure. The painters: Van Gogh, Monet, Manet, Renoir, Degas, Cézanne,
+  Gauguin, Seurat, Matisse, Chagall, Malevich, Klimt, Munch, Kandinsky, Picasso,
+  Dalí, Miró, Magritte, Modigliani, Klee, Pollock.
+- Realms that come in versions: each match takes one version from a shuffled
+  bag of its own, kept between sessions, so none comes back before all have
+  been seen; a match left unfinished keeps its version. The story button shows
+  the version's own card before the realm's essay.
+- New exhibits in the cabinet: a cloud chamber with its two curling tracks, a
+  plate with two slits and its fringes, a plate camera.
+- A darkroom's sound: water running through the wash tray, the safelight's
+  transformer, a drop now and then.
+
 ## 0.8
 
 - The double slit, 1927: in place of the net, a screen of smoked glass with two

@@ -1,0 +1,9 @@
+screen 1096 2560
+cabinet chamber 11 6
+cabinet slit 11 3
+cabinet darkroom 11 8 6
+cabinet river 11 5
+wait 0.3
+tap 137 610
+wait 0.5
+shot cab

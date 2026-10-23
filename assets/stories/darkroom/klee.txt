@@ -1,0 +1,1 @@
+Klee. Squares of colour side by side, like notes in a chord. Over there each cell holds one colour and the ball flickers from square to square.

@@ -1,0 +1,189 @@
+screen 1096 2560
+realm 7
+level 5
+seed 0
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_00
+seed 1
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_01
+seed 2
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_02
+seed 3
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_03
+seed 4
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_04
+seed 5
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_05
+seed 6
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_06
+seed 7
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_07
+seed 8
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_08
+seed 9
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_09
+seed 10
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_10
+seed 11
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_11
+seed 12
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_12
+seed 13
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_13
+seed 14
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_14
+seed 15
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_15
+seed 16
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_16
+seed 17
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_17
+seed 18
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_18
+seed 19
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_19
+seed 20
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_20
+seed 21
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_21
+seed 22
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_22
+seed 23
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_23
+seed 24
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_24
+seed 25
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_25
+seed 26
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_26
+seed 27
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_27
+seed 28
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_28
+seed 29
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_29
+seed 30
+wait 0.5
+tap 137 300
+bot on
+wait 4.3
+shot dk_30

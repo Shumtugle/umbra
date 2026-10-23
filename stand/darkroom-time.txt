@@ -1,0 +1,51 @@
+screen 1096 2560
+realm 7
+level 5
+seed 10
+wait 0.3
+tap 137 300
+bot on
+wait 1
+time 300
+seed 17
+wait 0.3
+tap 137 300
+bot on
+wait 1
+time 300
+seed 21
+wait 0.3
+tap 137 300
+bot on
+wait 1
+time 300
+seed 23
+wait 0.3
+tap 137 300
+bot on
+wait 1
+time 300
+seed 24
+wait 0.3
+tap 137 300
+bot on
+wait 1
+time 300
+seed 25
+wait 0.3
+tap 137 300
+bot on
+wait 1
+time 300
+seed 30
+wait 0.3
+tap 137 300
+bot on
+wait 1
+time 300
+seed 6
+wait 0.3
+tap 137 300
+bot on
+wait 1
+time 300

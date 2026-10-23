@@ -242,6 +242,9 @@ public final class Stand implements World.Host {
             setPrefText("cabinet", world.cabinet.save());
         } else if (c.equals("realm")) {
             world.pick(Integer.parseInt(p[1]));
+        } else if (c.equals("seed")) {
+            world.seedPinned = Integer.parseInt(p[1]);
+            world.pick(world.realmIndex);
         } else if (c.equals("time")) {
             int n = Integer.parseInt(p[1]);
             long t0 = System.nanoTime();

@@ -23,6 +23,12 @@ is computed pixel by pixel on the processor, and the sounds are synthesized.
 - **The cloud chamber, 1932.** Every ball carries a charge, red or blue; in the
   magnetic field between the coils red turns one way and blue the other, and
   the ball's trail of mist shows the curve.
+- **The darkroom, 1839.** The ball flies plain, and the law is in the eye:
+  the far half of the table is seen through a different eye in every match,
+  thirty-one of them. Ten are instruments (a negative, a daguerreotype that
+  turns negative by itself, a heat camera, X-rays, a colour-blind eye, a long
+  exposure and more) and twenty-one are painters, each by a manner, never by a
+  picture. Every eye hides or shows something the plain eye would not.
 - **The double slit, 1927.** A screen with two slits in place of the net, and
   fringes behind it: the ball comes down only on the bright ones, unless the
   lamp is watching which slit it took.
