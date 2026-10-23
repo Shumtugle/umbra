@@ -95,6 +95,11 @@ final class Darkroom extends Realm {
     }
 
     @Override
+    String seedName(int i) {
+        return SEEN[((i % SEEN.length) + SEEN.length) % SEEN.length];
+    }
+
+    @Override
     String[] stories() {
         return new String[]{"darkroom/" + EYES[eye], "darkroom"};
     }

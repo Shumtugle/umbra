@@ -1,5 +1,13 @@
 # Changes
 
+## 0.10
+
+- A debug screen, opened by holding a finger on the big title for a second and
+  a bit: any realm, any of its versions, any level, then play it. While debug
+  is on, the realm and the version stay put from match to match, a small red
+  line on the screen says so, and nothing played counts: no rounds, no level,
+  no exhibits, no match kept for later. Debug off returns the shuffled order.
+
 ## 0.9
 
 - The darkroom, 1839: our half of the table lies under a red safelight, the far

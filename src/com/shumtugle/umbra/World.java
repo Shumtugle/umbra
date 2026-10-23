@@ -11,11 +11,11 @@ package com.shumtugle.umbra;
  * and each game pixel is a whole number of screen pixels.
  */
 final class World implements Game.Sink {
-    static final String VERSION = "0.9";   // shown on screen; keep in step with versionName
+    static final String VERSION = "0.10";   // shown on screen; keep in step with versionName
     static final int TARGET_W = 270;       // about this many game pixels across
 
     static final int DOWN = 0, MOVE = 1, UP = 2;
-    static final int MENU = 0, PLAY = 1, RESULT = 2, CABINET = 3;
+    static final int MENU = 0, PLAY = 1, RESULT = 2, CABINET = 3, DEBUG = 4;
 
     /** What the game may ask of the phone. The stand answers with nothing. */
     interface Host {
@@ -68,7 +68,13 @@ final class World implements Game.Sink {
     private boolean pinned;                // a realm picked by hand stays put, for checking it                // a match was left unfinished; the next one picks it up
     private int savedPoints = -1;
     private long seed = 1;
-    private float downX, downY, lastY;
+    private float downX, downY, lastX, lastY;
+
+    // the debug screen: any realm, any version, any level, and nothing it plays is counted
+    boolean debug;
+    int dbRealm, dbSeed, dbLevel = 1;
+    private float dbScroll, holdStart;
+    private boolean holdUsed;
 
     World(Host host) {
         this.host = host;
@@ -203,8 +209,13 @@ final class World implements Game.Sink {
 
     // ---- flow
 
+    /** The level matches are played at: the real one, or the one set on the debug screen. */
+    private int playLevel() {
+        return debug ? dbLevel : level;
+    }
+
     private void attract() {
-        realm().setLevel(level);
+        realm().setLevel(playLevel());
         if (realm().seeds() > 0) realm().seed(nextSeed(realm(), false));
         game = new Game(this, realm(), seed++);
         game.startMatch(false, 0.62f);
@@ -217,12 +228,12 @@ final class World implements Game.Sink {
     }
 
     private void begin() {
-        realm().setLevel(level);
+        realm().setLevel(playLevel());
         Realm r = realm();
         if (r.seeds() > 0) r.seed(resume ? host.pref("m.seed", r.seed()) : nextSeed(r, true));
         game = new Game(this, realm(), seed++ * 7919L);
         screen = PLAY;
-        game.startMatch(true, skill(level));
+        game.startMatch(true, skill(playLevel()));
         if (resume) {
             game.resume(host.pref("m.s0", 0), host.pref("m.s1", 0), host.pref("m.first", 0),
                     host.pref("m.shot0", game.shotsLeft[0]), host.pref("m.shot1", game.shotsLeft[1]), host.pref("m.behind", 0));
@@ -252,10 +263,10 @@ final class World implements Game.Sink {
     void back() {
         if (storyOpen) return;
         if (screen == MENU) host.quit();
-        else if (screen == CABINET) screen = MENU;
+        else if (screen == CABINET || screen == DEBUG) screen = MENU;
         else {
             // leaving a match half played: it waits on the title screen
-            if (screen == PLAY && game.winner < 0) {
+            if (screen == PLAY && game.winner < 0 && !debug) {
                 saveMatch();
                 resume = true;
             }
@@ -303,13 +314,26 @@ final class World implements Game.Sink {
             }
             return;
         }
+        if (screen == DEBUG) {
+            debugTouch(type, x, y);
+            return;
+        }
         if (screen == MENU) {
             if (type == DOWN) {
-                downX = x;
-                downY = y;
+                downX = lastX = x;
+                downY = lastY = y;
                 touching = true;
+                holdStart = clock;
+                holdUsed = false;
+            } else if (type == MOVE) {
+                lastX = x;
+                lastY = y;
             } else if (type == UP) {
                 touching = false;
+                if (holdUsed) {
+                    holdUsed = false;
+                    return;
+                }
                 if (Math.abs(x - downX) < 0.1f * w && Math.abs(y - downY) < 0.1f * w) {
                     if (y > h - 62) {
                         host.cue(Game.C_TICK, 0.5f, 1f);
@@ -346,13 +370,20 @@ final class World implements Game.Sink {
             host.hum(game.realm.hum(), 0.25f, 0f);
             return;
         }
+        // a long hold on the title opens the debug screen
+        if (screen == MENU && touching && !holdUsed && clock - holdStart > 1.2f && downY < titleBottom()
+                && Math.abs(lastX - downX) < 0.05f * w && Math.abs(lastY - downY) < 0.05f * w) {
+            holdUsed = true;
+            openDebug();
+        }
+        if (screen == DEBUG) return;
         if (screen != CABINET) {
             game.update(dt);
             scene.update(game, dt);
         }
         float near = game.ball.gone || game.state == Game.SERVE ? 0f : game.realm.closeness(game.ball);
         host.hum(game.realm.hum(), screen == PLAY ? 1f : 0.35f, near * near);
-        if (screen == PLAY && game.points != savedPoints && game.winner < 0) {
+        if (screen == PLAY && game.points != savedPoints && game.winner < 0 && !debug) {
             savedPoints = game.points;
             saveMatch();
         }
@@ -363,7 +394,9 @@ final class World implements Game.Sink {
             resultTime = 0f;
             youWon = game.winner == 0;
             newItem = null;
-            if (youWon) {
+            if (debug) {
+                // a debug match counts for nothing
+            } else if (youWon) {
                 won++;
                 level++;
                 newItem = cabinet.add(realm().key(), game.score[0], game.score[1], game.worstBehind);
@@ -372,7 +405,7 @@ final class World implements Game.Sink {
                 lost++;
                 level = Math.max(1, level - 1);
             }
-            clearMatch();
+            if (!debug) clearMatch();
             host.setPref("level", level);
             host.setPref("won", won);
             host.setPref("lost", lost);
@@ -388,12 +421,17 @@ final class World implements Game.Sink {
             cabinetScreen(f);
             return;
         }
+        if (screen == DEBUG) {
+            debugScreen(f);
+            return;
+        }
         scene.render(f, game, game.clock);
         if (screen == MENU) title(f);
         else scoreboard(f);
         if (screen == PLAY) hints(f);
         if (screen == RESULT) result(f);
         if (screen == MENU || screen == PLAY) storyButton(f);
+        if (debug) text(f, "DEBUG  LEVEL " + dbLevel, 4, h - 11, 1, 0xFFFF6A5A);
         String v = "V" + VERSION;
         PixelFont.draw(f, v, w - PixelFont.width(v, 1) - 4, h - 11, 1, 0xFF56607C);
     }
@@ -452,6 +490,12 @@ final class World implements Game.Sink {
         PixelFont.draw(f, "?", (int) cx - 4, (int) cy - 6, 2, 0xFFFFC857);
     }
 
+    /** The lowest row of the big title, where a long hold opens the debug screen. */
+    private float titleBottom() {
+        int big = Math.max(4, (int) (w * 0.84f / 30f));
+        return h * 0.11f + 7 * big + 30;
+    }
+
     private void title(Px f) {
         for (int i = 0; i < f.a.length; i++) f.a[i] = Col.mul(f.a[i], 0.62f);
         int big = Math.max(4, (int) (w * 0.84f / 30f));
@@ -493,6 +537,141 @@ final class World implements Game.Sink {
         int show = Math.min(n, 6);
         float step = (w - 24) / 6f, x0 = 12 + step / 2;
         for (int i = 0; i < show; i++) Cabinet.draw(f, cabinet.items.get(n - show + i), x0 + i * step, y + 2, 15f, clock);
+    }
+
+    // ---- the debug screen
+
+    private static final int DB_HEAD = 62, DB_ROW = 24, DB_CELL = 26;
+
+    private void openDebug() {
+        host.cue(Game.C_TICK, 0.6f, 1.5f);
+        touching = false;
+        dbRealm = realmIndex;
+        Realm r = realm();
+        dbSeed = r.seeds() > 0 ? r.seed() : 0;
+        if (!debug) dbLevel = level;
+        dbScroll = 0f;
+        screen = DEBUG;
+    }
+
+    private int dbSeedsTop() {
+        return DB_HEAD + realms.length * DB_ROW + 10;
+    }
+
+    private int dbNameY() {
+        int n = realms[dbRealm].seeds();
+        return dbSeedsTop() + (n + 7) / 8 * DB_CELL + 6;
+    }
+
+    private int dbLevelY() {
+        return realms[dbRealm].seeds() > 0 ? dbNameY() + 40 : dbSeedsTop();
+    }
+
+    private int dbPlayY() {
+        return dbLevelY() + 46;
+    }
+
+    private int dbOffY() {
+        return dbPlayY() + 52;
+    }
+
+    private void debugTouch(int type, float x, float y) {
+        if (type == DOWN) {
+            downX = x;
+            downY = lastY = y;
+            return;
+        }
+        if (type == MOVE) {
+            float bottom = (debug ? dbOffY() + 44 : dbPlayY() + 52) + 20;
+            dbScroll = Math.max(0f, Math.min(Math.max(0f, bottom - h), dbScroll - (y - lastY)));
+            lastY = y;
+            return;
+        }
+        if (Math.abs(y - downY) > 8f || Math.abs(x - downX) > 8f) return;
+        if (y < DB_HEAD - 6) {
+            screen = MENU;
+            return;
+        }
+        float sy = y + dbScroll;
+        host.cue(Game.C_TICK, 0.5f, 1.2f);
+        if (sy >= DB_HEAD && sy < DB_HEAD + realms.length * DB_ROW) {
+            dbRealm = (int) ((sy - DB_HEAD) / DB_ROW);
+            int n = realms[dbRealm].seeds();
+            dbSeed = n > 0 ? Math.min(dbSeed, n - 1) : 0;
+            return;
+        }
+        int n = realms[dbRealm].seeds();
+        float cw = (w - 8) / 8f;
+        if (n > 0 && sy >= dbSeedsTop() && sy < dbSeedsTop() + (n + 7) / 8 * DB_CELL) {
+            int k = (int) ((sy - dbSeedsTop()) / DB_CELL) * 8 + (int) Math.min(7, Math.max(0, (x - 4) / cw));
+            if (k < n) dbSeed = k;
+            return;
+        }
+        if (sy >= dbLevelY() && sy < dbLevelY() + 34) {
+            dbLevel = x < w / 2f ? Math.max(1, dbLevel - 1) : Math.min(30, dbLevel + 1);
+            return;
+        }
+        if (sy >= dbPlayY() && sy < dbPlayY() + 40) {
+            debug = true;
+            resume = false;
+            show(dbRealm);
+            pinned = true;
+            seedPinned = n > 0 ? dbSeed : -1;
+            attract();
+            return;
+        }
+        if (debug && sy >= dbOffY() && sy < dbOffY() + 36) {
+            debug = false;
+            pinned = false;
+            seedPinned = -1;
+            attract();
+        }
+    }
+
+    /** Every realm in a list, its versions in a grid, the level, and a button to play them. */
+    private void debugScreen(Px f) {
+        for (int i = 0; i < f.a.length; i++) f.a[i] = 0xFF0C0E14;
+        int s = (int) dbScroll;
+        for (int i = 0; i < realms.length; i++) {
+            int y = DB_HEAD + i * DB_ROW - s;
+            boolean on = i == dbRealm;
+            if (on) f.rect(6, y, w - 6, y + DB_ROW - 3, 0xFF2A3350);
+            String name = realms[i].name() + (realms[i].seeds() > 0 ? "  " + realms[i].seeds() : "");
+            int sc = PixelFont.width(name, 2) <= w - 24 ? 2 : 1;
+            text(f, name, 12, y + (DB_ROW - 3 - 7 * sc) / 2, sc, on ? 0xFFFFC857 : 0xFFA8BCE0);
+        }
+        Realm r = realms[dbRealm];
+        int n = r.seeds();
+        if (n > 0) {
+            float cw = (w - 8) / 8f;
+            for (int k = 0; k < n; k++) {
+                int x0 = (int) (4 + (k % 8) * cw), y0 = dbSeedsTop() + (k / 8) * DB_CELL - s;
+                boolean on = k == dbSeed;
+                f.rect(x0 + 1, y0 + 1, (int) (x0 + cw) - 1, y0 + DB_CELL - 2, on ? 0xFFFFC857 : 0xFF1C2232);
+                String num = Integer.toString(k + 1);
+                text(f, num, x0 + (int) ((cw - PixelFont.width(num, 2)) / 2), y0 + 5, 2, on ? 0xFF1A1008 : 0xFFA8BCE0);
+            }
+            block(f, r.seedName(dbSeed), dbNameY() - s, 2, 0xFFFFC857);
+        }
+        int ly = dbLevelY() - s;
+        f.rect(6, ly, w / 2 - 3, ly + 30, 0xFF1C2232);
+        f.rect(w / 2 + 3, ly, w - 6, ly + 30, 0xFF1C2232);
+        text(f, "-", 18, ly + 5, 3, 0xFFA8BCE0);
+        text(f, "+", w - 18 - PixelFont.width("+", 3), ly + 5, 3, 0xFFA8BCE0);
+        center(f, "LEVEL " + dbLevel, ly + 8, 2, 0xFFF2F6FA);
+        int py = dbPlayY() - s;
+        f.rect(6, py, w - 6, py + 38, 0xFF2E6A3E);
+        center(f, "PLAY THIS", py + 9, 3, 0xFFF2F6FA);
+        if (debug) {
+            int oy = dbOffY() - s;
+            f.rect(6, oy, w - 6, oy + 32, 0xFF5A2A2A);
+            center(f, "DEBUG OFF", oy + 9, 2, 0xFFF2F6FA);
+        }
+        // the header stays put; touch it to close
+        f.rect(0, 0, w, DB_HEAD - 6, 0xFF06070A);
+        center(f, "DEBUG", 8, 3, 0xFFFF6A5A);
+        center(f, "NOTHING PLAYED HERE COUNTS", 36, 1, 0xFF8FA4CC);
+        PixelFont.draw(f, "X", w - 20, 10, 2, 0xFFFFC857);
     }
 
     /** All exhibits, on shelves in a dark wooden cabinet; drag to scroll, touch the top to close. */

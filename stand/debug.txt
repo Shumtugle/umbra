@@ -1,0 +1,21 @@
+screen 1096 2560
+wait 0.5
+down 137 90
+wait 1.5
+up 137 90
+wait 0.2
+shot db_open
+tap 137 248
+wait 0.1
+tap 100 290
+wait 0.1
+shot db_pick
+tap 200 418
+tap 200 418
+wait 0.1
+tap 137 475
+wait 0.6
+shot db_title
+tap 137 300
+wait 0.4
+shot db_play

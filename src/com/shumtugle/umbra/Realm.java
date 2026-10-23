@@ -125,6 +125,11 @@ abstract class Realm {
         return 0;
     }
 
+    /** What a version is called, for the debug screen. */
+    String seedName(int i) {
+        return Integer.toString(i + 1);
+    }
+
     /** The stories to show, in order, by their names under the stories folder. */
     String[] stories() {
         return new String[]{key()};
