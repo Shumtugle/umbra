@@ -1,5 +1,16 @@
 # Changes
 
+## 0.8
+
+- The double slit, 1927: in place of the net, a screen of smoked glass with two
+  slits; a ball must pass through one of them, and the glass stops the rest.
+  Behind it bright and dark fringes lie across the table, and the ball is drawn
+  to the nearest bright one. A lamp over the left slit lights up every so
+  often: while it watches, the fringes fade and the ball flies plain. Every
+  landing leaves a dot, and the dots build up the fringes over a match. In the
+  deeper rounds a shadow ball from the world next door flies through the other
+  slit.
+
 ## 0.7
 
 - The cloud chamber, 1932: vapour, a lamp from the side, black velvet, and two

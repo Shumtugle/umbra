@@ -29,13 +29,15 @@ Each story is an essay of the same five parts:
 | `nucleus` | The nucleus, 1911 | alpha particles fired at thin gold foil, a few thrown straight back | Geiger, Marsden, Rutherford, Thomson, Bohr | the atom is almost empty; surprise as the engine of discovery |
 | `lyceum` | The Lyceum, 335 BC | the thrown stone in the books on nature: violent motion, natural place; later, the theory of impetus | Aristotle, Philoponus, Buridan; Eudoxus and Ptolemy for the cosmos in the mosaic | why a wrong theory lasts two thousand years; common sense as a theory |
 | `river` | The Black River, 1837 | a winter duel by a frozen river; the wind as a force on a flying body | the poet and his opponent, the seconds; Beaufort for the wind | honour, chance and fate; what a rule is when it is a ritual |
+| `slit` | The double slit, 1927 | one particle at a time through two slits, and the fringes it builds; a detector that watches one slit and wipes them out | Young, Davisson, Germer, Tonomura, Feynman; Deutsch for the shadow particles | interference, the observer, the many worlds |
 | `chamber` | The cloud chamber, 1932 | tracks of charged particles in supersaturated vapour, curled by a magnet; a track that curled the wrong way | Wilson, Anderson, Blackett | seeing the invisible by what it leaves behind; antimatter found by its curl |
 
 ### Realms to come, and their stories
 
 | realm | the experiment | the people | the idea |
 |---|---|---|---|
-| Double slit | one particle at a time through two slits, and the fringes it builds | Young, Davisson, Germer, Feynman; Deutsch for shadow photons | interference, the observer, the many worlds |
+| Carousel | the table and both players turn under the camera; the ball flies straight and the table moves beneath it, the station seen from outside | Newton, Mach, Foucault, Lense, Thirring | who is turning, the table or the universe; one law seen from two frames |
+| Tachyons | particles faster than light: the less energy, the faster; arriving before they are sent | Sommerfeld, Tolman, Bilaniuk, Sudarshan, Feinberg | causality and its paradoxes; a soft stroke that flies fastest |
 | Wormhole | a bridge through spacetime | Einstein, Rosen, Wheeler, Morris, Thorne | shortcuts and causality |
 | Collider | beams bent by magnets and brought into collision | Lawrence; the builders of the great rings; Feynman for the diagrams | finding the small with the very large |
 | Tunnelling | a particle crossing a wall it cannot climb | Gamow, Gurney, Condon | probability as a physical thing |
@@ -53,7 +55,7 @@ Each story is an essay of the same five parts:
 
 Done so far, checked on the stand and, where marked, on the phone:
 
-- Six realms, played in a shuffled order after the hole (on the phone: they
+- Seven realms, played in a shuffled order after the hole (on the phone: they
   look right).
 - The cabinet of curiosities, the story pages, matches that wait.
 - Larger ball, story button and lettering (on the phone: easier to use, the
@@ -61,11 +63,11 @@ Done so far, checked on the stand and, where marked, on the phone:
 
 Next, in this order:
 
-1. The double slit: the net becomes a wall with two slits, fringes on the far
-   half, a detector lamp that turns them off; shadow balls from neighbouring
-   worlds on its deeper rounds.
-2. The wormhole, then the collider with the rally drawn as a diagram, then
+1. The wormhole, then the collider with the rally drawn as a diagram, then
    tunnelling, the interferometer, time dilation, the pulsar, dark matter.
+2. The carousel: the table rocks under a still camera, the ball flies straight;
+   a pair to the station. Tachyons: a soft stroke flies fastest, the tail runs
+   ahead of the ball.
 3. Galileo's ship, Zeno, epicycles, harmony, the written future, mixed in
    among them.
 4. The stories, one essay per realm, in five parts as above.

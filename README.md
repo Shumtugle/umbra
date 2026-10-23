@@ -23,6 +23,9 @@ is computed pixel by pixel on the processor, and the sounds are synthesized.
 - **The cloud chamber, 1932.** Every ball carries a charge, red or blue; in the
   magnetic field between the coils red turns one way and blue the other, and
   the ball's trail of mist shows the curve.
+- **The double slit, 1927.** A screen with two slits in place of the net, and
+  fringes behind it: the ball comes down only on the bright ones, unless the
+  lamp is watching which slit it took.
 - **The hole.** A black hole drifts over the net. It pulls the ball, harder the
   closer it passes, and keeps whatever crosses its horizon. The grid on the
   table falls toward it like a funnel; it hums louder as the ball comes near.

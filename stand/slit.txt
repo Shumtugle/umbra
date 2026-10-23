@@ -1,0 +1,13 @@
+screen 1096 2560
+realm 6
+level 5
+wait 0.8
+shot sl_title
+tap 137 300
+bot on
+wait 7
+shot sl_rally_a
+wait 0.25
+shot sl_rally_b
+wait 6
+shot sl_rally_c

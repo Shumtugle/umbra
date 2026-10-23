@@ -60,7 +60,8 @@ final class Ball {
             vz *= GRIP;
             return BOUNCE;
         }
-        return net(pz);
+        int wall = realm.barrier(this, pz);
+        return wall >= 0 ? wall : net(pz);
     }
 
     private int net(float pz) {

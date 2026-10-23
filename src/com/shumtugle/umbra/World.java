@@ -11,7 +11,7 @@ package com.shumtugle.umbra;
  * and each game pixel is a whole number of screen pixels.
  */
 final class World implements Game.Sink {
-    static final String VERSION = "0.7";   // shown on screen; keep in step with versionName
+    static final String VERSION = "0.8";   // shown on screen; keep in step with versionName
     static final int TARGET_W = 270;       // about this many game pixels across
 
     static final int DOWN = 0, MOVE = 1, UP = 2;
@@ -50,7 +50,7 @@ final class World implements Game.Sink {
     float lift;                            // the paddle rides this far above the finger
     int screen = MENU;
     int level, won, lost;                  // level is the opponent's strength; it follows the results unseen
-    final Realm[] realms = {new Hole(), new Station(), new Nucleus(), new Lyceum(), new River(), new Chamber()};
+    final Realm[] realms = {new Hole(), new Station(), new Nucleus(), new Lyceum(), new River(), new Chamber(), new Slit()};
     int realmIndex;
     java.util.Random shuffle = new java.util.Random(System.nanoTime());
     private int[] bag = new int[0];

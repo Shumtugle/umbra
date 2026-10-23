@@ -266,6 +266,7 @@ final class Game {
         float err = 0.012f + 0.2f * miss * miss + 0.10f * wobble;
         float tz = NZ + dir * (0.35f + 0.85f * power) + (float) rnd.nextGaussian() * err;
         float tx = Math.max(-0.62f, Math.min(0.62f, aimX)) + (float) rnd.nextGaussian() * err;
+        tx = realm.steer(b, side, tx, tz, wobble);
         // the height of the ball's centre where it crosses the net
         float clear = shot ? 0.012f : 0.035f + 0.12f * Math.max(0f, 1f - power) * Math.max(0f, 1f - power);
         float scatter = 0.008f + 0.012f * power + 0.05f * miss + 0.08f * wobble + (shot ? 0.03f : 0f);
@@ -351,7 +352,7 @@ final class Game {
             int half = b.z < NZ ? 0 : 1;
             if (half == hitter) {
                 if (netTouched) nets++;
-                point(1 - hitter, netTouched ? "NET" : "SHORT");
+                point(1 - hitter, netTouched ? realm.netWord() : "SHORT");
                 return;
             }
             if (serving && netTouched) {
@@ -372,7 +373,7 @@ final class Game {
         if (beyond || fell) {
             if (bounces == 0) {
                 if (netTouched) nets++;
-                point(r, netTouched ? "NET" : "OUT");
+                point(r, netTouched ? realm.netWord() : "OUT");
             } else point(hitter, "MISS");
         }
     }

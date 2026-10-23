@@ -51,6 +51,29 @@ abstract class Realm {
         return false;
     }
 
+    /**
+     * Where a realm puts something else in place of the net, it stops the ball
+     * here and says what happened (as a step would); -1 keeps the ordinary net.
+     */
+    int barrier(Ball b, float prevZ) {
+        return -1;
+    }
+
+    /** Draws the realm's own barrier in place of the net; false draws the ordinary net. */
+    boolean drawBarrier(Scene s, Px f, Game g, float t) {
+        return false;
+    }
+
+    /** What a ball stopped by the net is called here. */
+    String netWord() {
+        return "NET";
+    }
+
+    /** Where the ball is aimed across, after the realm has its say; tz is the depth it is aimed at. */
+    float steer(Ball b, int side, float tx, float tz, float wobble) {
+        return tx;
+    }
+
     /** Shots each side may fire in a match here; 0 where there are none. */
     int shots() {
         return 0;

@@ -209,7 +209,7 @@ final class Scene {
                     ball(f, g);
                     break;
                 case 2:
-                    net(f, g);
+                    if (!realm.drawBarrier(this, f, g, t)) net(f, g);
                     break;
                 case 3:
                     realm.drawCenter(this, f, g, t);

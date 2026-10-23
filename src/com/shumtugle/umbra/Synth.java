@@ -8,7 +8,7 @@ package com.shumtugle.umbra;
  * output to its speaker, the stand writes it to a file.
  */
 final class Synth {
-    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3, HUM_BLIZZARD = 4, HUM_CHAMBER = 5;
+    static final int HUM_DRONE = 0, HUM_MAINS = 1, HUM_STATION = 2, HUM_CICADAS = 3, HUM_BLIZZARD = 4, HUM_CHAMBER = 5, HUM_OPTICS = 6;
 
     final int rate;
     private final float[][] bank = new float[13][];
@@ -295,7 +295,7 @@ final class Synth {
         }
         float lt = humLevelT, nt = humNearT;
         boolean mains = humKind == HUM_MAINS, station = humKind == HUM_STATION, cicadas = humKind == HUM_CICADAS,
-                blizzard = humKind == HUM_BLIZZARD, chamber = humKind == HUM_CHAMBER;
+                blizzard = humKind == HUM_BLIZZARD, chamber = humKind == HUM_CHAMBER, optics = humKind == HUM_OPTICS;
         float cicF = 2f * (float) Math.sin(Math.PI * 5600.0 / rate);
         float ease = 1f - (float) Math.exp(-1.0 / (0.06 * rate));
         float twoPi = 6.2831853f / rate;
@@ -325,7 +325,13 @@ final class Synth {
             if (ph2 > 6.2831853f) ph2 -= 6.2831853f;
             if (ph3 > 6.2831853f) ph3 -= 6.2831853f;
             float hum;
-            if (chamber) {
+            if (optics) {
+                // a dark optics room: still air, and the thin high singing of a light source
+                float nz = noise();
+                wind += (nz - wind) * 0.02f;
+                float sing = (float) (Math.sin(ph1 * 34.0) + 0.6 * Math.sin(ph1 * 34.17 + 1.0)) * (0.6f + 0.4f * (float) Math.sin(ph3 * 0.01f));
+                hum = humLevel * (wind * 0.35f + sing * 0.006f);
+            } else if (chamber) {
                 // the chamber: the hiss of vapour, the coils' low hum, and a counter clicking at stray particles
                 float nz = noise();
                 float hiss = nz - wind;
