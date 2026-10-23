@@ -38,6 +38,9 @@ Each story is an essay of the same five parts:
 |---|---|---|---|
 | Carousel | the table and both players turn under the camera; the ball flies straight and the table moves beneath it, the station seen from outside | Newton, Mach, Foucault, Lense, Thirring | who is turning, the table or the universe; one law seen from two frames |
 | Tachyons | particles faster than light: the less energy, the faster; arriving before they are sent | Sommerfeld, Tolman, Bilaniuk, Sudarshan, Feinberg | causality and its paradoxes; a soft stroke that flies fastest |
+| The round table | knights in a ring at a table with no head; one seat always empty, the perilous seat that waits for the worthy | Wace, Layamon, Robert de Boron, Malory; the oak table on the wall at Winchester, 24 knights and the king | equality without a head; a legend that grew from no number to sixteen hundred |
+| Leonardo's notebook | water drawn as curls; friction a quarter of the weight, whatever the area of contact; a knight in armour moved by cords and pulleys; mirror writing | Leonardo da Vinci; Amontons, who found the friction rule again two centuries later | seeing as a way of knowing; the engineer who mocked the seekers of perpetual motion |
+| The board | a position from a famous game set on the table; the net between the fourth and fifth ranks; pieces knocked over and off | von Kempelen and his chess automaton with a man inside; Zermelo, Shannon, Turing; the masters whose games set the boards | a finite game solved in principle and never in practice; the hidden player in the machine |
 | Wormhole | a bridge through spacetime | Einstein, Rosen, Wheeler, Morris, Thorne | shortcuts and causality |
 | Collider | beams bent by magnets and brought into collision | Lawrence; the builders of the great rings; Feynman for the diagrams | finding the small with the very large |
 | Tunnelling | a particle crossing a wall it cannot climb | Gamow, Gurney, Condon | probability as a physical thing |
@@ -68,17 +71,27 @@ Next, in this order:
 2. The carousel: the table rocks under a still camera, the ball flies straight;
    a pair to the station. Tachyons: a soft stroke flies fastest, the tail runs
    ahead of the ball.
-3. Galileo's ship, Zeno, epicycles, harmony, the written future, mixed in
+3. The round table: a ring of opponents on the far side turns after every
+   stroke, each with his own arms and habit; a knight who loses a point leaves
+   and his shield is turned over; the perilous seat answers by itself, and in
+   the deeper rounds a knight in white takes it. Leonardo's notebook: every
+   stroke leaves a vortex that lives a few seconds and drifts the next ball;
+   a sepia page, mirror writing, his mechanical knight among the opponents.
+4. The board: each match sets a position from a famous game, about a hundred
+   of them, every one checked by replaying the game's moves. Pieces stop the
+   ball, tip over and fall off the table; the king rocks and stays standing.
+   The material knocked down is counted, and the cabinet keeps the best piece.
+5. Galileo's ship, Zeno, epicycles, harmony, the written future, mixed in
    among them.
-4. The stories, one essay per realm, in five parts as above.
-5. Phone check: the paddle's lift above the finger, the strike ring, sound
+6. The stories, one essay per realm, in five parts as above.
+7. Phone check: the paddle's lift above the finger, the strike ring, sound
    latency, frame rate on the phone and on the tablet, the swipe that fires a
    shot.
-6. Difficulty measured with a living hand, not only the stand's bot; longer
+8. Difficulty measured with a living hand, not only the stand's bot; longer
    rallies on the first rounds.
-7. A second black hole in the deeper rounds of the hole.
-8. Paddles that carry the law of their realm wherever it fits.
-9. A live project page in `docs/`: the game in the browser, played with a
-   finger.
-10. Releases and the project page are made by the author; the line on the
+9. A second black hole in the deeper rounds of the hole.
+10. Paddles that carry the law of their realm wherever it fits.
+11. A live project page in `docs/`: the game in the browser, played with a
+    finger.
+12. Releases and the project page are made by the author; the line on the
     author's showcase goes through the duty desk.
