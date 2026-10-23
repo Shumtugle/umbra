@@ -175,7 +175,7 @@ final class World implements Game.Sink {
     void resize(int width, int height) {
         w = width;
         h = height;
-        lift = 0.13f * w;
+        lift = Cam.LIFT * w;
         scenes = new Scene[realms.length];
         scene = sceneOf(realmIndex);
         if (game == null) attract();
@@ -431,9 +431,11 @@ final class World implements Game.Sink {
         if (screen == PLAY) hints(f);
         if (screen == RESULT) result(f);
         if (screen == MENU || screen == PLAY) storyButton(f);
-        if (debug) text(f, "DEBUG  LEVEL " + dbLevel, 4, h - 11, 1, 0xFFFF6A5A);
-        String v = "V" + VERSION;
-        PixelFont.draw(f, v, w - PixelFont.width(v, 1) - 4, h - 11, 1, 0xFF56607C);
+        if (screen == MENU) {
+            if (debug) text(f, "DEBUG  LEVEL " + dbLevel, 4, h - 11, 1, 0xFFFF6A5A);
+            String v = "V" + VERSION;
+            PixelFont.draw(f, v, w - PixelFont.width(v, 1) - 4, h - 11, 1, 0xFF56607C);
+        }
     }
 
     private void text(Px f, String s, int x, int y, int scale, int color) {
@@ -717,24 +719,27 @@ final class World implements Game.Sink {
     private void scoreboard(Px f) {
         Game g = game;
         String a = Integer.toString(g.score[0]), b = Integer.toString(g.score[1]);
-        int m = 8, right = w - m - (int) (BTN_X + BTN_R) - 4;   // room for the story button at the far right
-        text(f, "YOU", m, 6, 2, 0xFFFF8E7A);
-        text(f, "CPU", right - PixelFont.width("CPU", 2), 6, 2, 0xFFA898F0);
-        text(f, a, m, 24, 4, 0xFFF2F6FA);
-        text(f, b, right - PixelFont.width(b, 4), 24, 4, 0xFFF2F6FA);
+        // the band at the bottom, under the finger: nothing there is touched, all of it is read between points
+        int y0 = h - (int) (Cam.BAND * w);
+        shade(f, y0 - 8, h, 0.5f);
+        int m = 8, right = w - m;
+        text(f, "YOU", m, y0 + 3, 2, 0xFFFF8E7A);
+        text(f, "CPU", right - PixelFont.width("CPU", 2), y0 + 3, 2, 0xFFA898F0);
+        text(f, a, m, y0 + 20, 4, 0xFFF2F6FA);
+        text(f, b, right - PixelFont.width(b, 4), y0 + 20, 4, 0xFFF2F6FA);
         // the realm's name, and the round, between the scores
         String name = g.realm.name();
         int left = m + 44, room = right - 44 - left;
         int ns = PixelFont.width(name, 2) <= room ? 2 : 1;
-        text(f, name, left + (room - PixelFont.width(name, ns)) / 2, 8, ns, 0xFFFFC857);
-        String rd = "ROUND " + round();
-        text(f, rd, left + (room - PixelFont.width(rd, 1)) / 2, 28, 1, 0xFF8FA4CC);
-        // shots still in hand, where the realm has them: a small pistol for each
+        text(f, name, left + (room - PixelFont.width(name, ns)) / 2, y0 + 8, ns, 0xFFFFC857);
+        String rd = debug ? "DEBUG  LEVEL " + dbLevel : "ROUND " + round();
+        text(f, rd, left + (room - PixelFont.width(rd, 1)) / 2, y0 + 28, 1, debug ? 0xFFFF6A5A : 0xFF8FA4CC);
+        // shots still in hand, where the realm has them: a small pistol for each, just over the band
         for (int side = 0; side < 2; side++)
-            for (int k = 0; k < g.shotsLeft[side]; k++) pistol(f, side == 0 ? m + k * 26 : right - 22 - k * 26, 60, side == 1);
+            for (int k = 0; k < g.shotsLeft[side]; k++) pistol(f, side == 0 ? m + k * 26 : right - 22 - k * 26, y0 - 16, side == 1);
         // who serves: a ball by that side's score
         float sx = g.server == 0 ? m + PixelFont.width(a, 4) + 9 : right - PixelFont.width(b, 4) - 9;
-        f.discAA(sx, 38, 3.6f, 0xFFF6F3EC, 1f);
+        f.discAA(sx, y0 + 34, 3.6f, 0xFFF6F3EC, 1f);
         if (g.msgT > 0f && g.state != Game.OVER) {
             int col = g.msgSide == 0 ? 0xFF9BE68A : g.msgSide == 1 ? 0xFFF28B82 : 0xFFF2F6FA;
             if (!g.human) col = 0xFFF2F6FA;
@@ -766,7 +771,7 @@ final class World implements Game.Sink {
 
     private void hints(Px f) {
         Game g = game;
-        int y = h - 52;
+        int y = h - (int) (Cam.BAND * w) - 34;
         if (g.state == Game.SERVE && g.server == 0 && g.held) {
             if (won + lost == 0) {
                 block(f, "SLIDE TO MOVE THE PADDLE. LIFT TO SERVE", y - 8, 2, 0xFFF2F6FA);
